@@ -1,0 +1,168 @@
+1
+00:00:00,000 --> 00:00:10,320
+see so you just kept up to date and let me get my questions and are you guys ready?
+
+2
+00:00:10,320 --> 00:00:29,840
+okay start
+
+3
+00:00:29,840 --> 00:00:37,760
+so for the students review part is the rating could be like one to five star or simple like or dislike
+
+4
+00:00:38,400 --> 00:00:44,080
+so when a performance that i have booked has passed or i've attended as well i'd like to be able to
+
+5
+00:00:44,080 --> 00:00:49,440
+leave a review for it this should include a compulsory one to five rating and an optional
+
+6
+00:00:49,440 --> 00:00:56,080
+free text field this should become a review for its event which also mentions that performance
+
+7
+00:00:56,080 --> 00:01:04,560
+that i have attended as well okay yeah now our second option is for tickets that are fully sponsored
+
+8
+00:01:04,560 --> 00:01:13,920
+for free is it still necessary to call an external payment interface or can the reverse reservation
+
+9
+00:01:13,920 --> 00:01:17,200
+number be issued directly by the app
+
+10
+00:01:17,200 --> 00:01:22,080
+so are you talking about when it's fully covered from the sponsor yeah so as a student i don't know
+
+11
+00:01:22,080 --> 00:01:28,960
+the answer uh but they should probably get an automatic reference that's a good idea yeah
+
+12
+00:01:28,960 --> 00:01:30,800
+okay okay okay i have my own personal preference
+
+13
+00:01:33,520 --> 00:01:39,600
+can the can the ep just give an address of performance like a pending a pending status like
+
+14
+00:01:39,600 --> 00:01:45,040
+they're going to give a specific address but we will give it like before the performance
+
+15
+00:01:45,680 --> 00:01:50,320
+did you repeat that question yeah can the ep provide the address as pending
+
+16
+00:01:50,320 --> 00:01:58,480
+and they can modify the address before the performance like one day before just give the actual address
+
+17
+00:01:58,480 --> 00:02:05,440
+so i can't answer that as a student because that's the ep's job but i would say that's a good idea yes
+
+18
+00:02:05,440 --> 00:02:15,760
+yes okay and what's the um can the entertainment provider see the uh all the contact details of the
+
+19
+00:02:15,760 --> 00:02:23,280
+audience or just can see the email address or and their name so once again i can't answer that but my
+
+20
+00:02:23,280 --> 00:02:30,880
+preference would be um if the user gives consent to other information about them then yes but i would say
+
+21
+00:02:30,880 --> 00:02:40,960
+only be email and their name do you want to have a preference feature like uh like the event provider
+
+22
+00:02:40,960 --> 00:02:48,640
+should be required to tag performance with a certain amount of relevant keywords from a
+
+23
+00:02:49,680 --> 00:02:56,720
+predetermined list so students could be then select them select like which tags they are interested in
+
+24
+00:02:56,720 --> 00:03:02,400
+and the system would display events in order to match the tags so yeah so for that performance
+
+25
+00:03:03,120 --> 00:03:09,200
+you'd have a preference for that performance right yeah and that would be up to three event types such
+
+26
+00:03:09,200 --> 00:03:17,200
+as music movie or sports and you can also choose no preferences at all when you're searching up so
+
+27
+00:03:17,200 --> 00:03:20,800
+that would probably yes that would be a tagging feature that they would implement
+
+28
+00:03:26,720 --> 00:03:48,560
+so when you're reviewing when you're viewing the reviews is that what was that your question yeah
+
+29
+00:03:49,040 --> 00:03:55,760
+when requesting a list of performances for each one i'd like to see the average rating from all the reviews
+
+30
+00:03:55,760 --> 00:04:02,800
+for that specific event uh then when i look at a specific performance in addition to all the usual
+
+31
+00:04:02,800 --> 00:04:09,040
+information i'd see i should also be able to see the both the average rating and that individual review
+
+32
+00:04:09,040 --> 00:04:14,880
+as well with performance that it was about the review rating and that optional comment field as well
+
+33
+00:04:14,880 --> 00:04:23,680
+yeah and another question can subsidy be increased or decreased can what be subsidy or subsidy and i guess
+
+34
+00:04:23,680 --> 00:04:33,440
+sponsor sponsor um so that's as a student i don't know the answer but i would say probably yeah
+
+35
+00:04:33,440 --> 00:04:45,520
+yeah but i can't give a specific answer to that unfortunately
+
+36
+00:04:47,760 --> 00:04:53,280
+what specific details do you want students to see when looking at the specific performance
+
+37
+00:04:53,280 --> 00:05:03,760
+uh that has so at that performance that's already happened or that you're trying to go to you're trying to go to
+
+38
+00:05:05,760 --> 00:05:06,000
+okay
+
+39
+00:05:06,000 --> 00:05:16,240
+um i want to ask about the details that you can edit when there's no booking can you edit the price
+
+40
+00:05:16,240 --> 00:05:30,560
+so um so as a student i don't know the answer to that but the ep should be able to change the time
+
+41
+00:05:32,400 --> 00:05:37,040
+and the booking date as well but i don't know the specifics on the other side
+
+42
+00:05:38,080 --> 00:05:41,600
+okay thank you very much thank you no problem
+
