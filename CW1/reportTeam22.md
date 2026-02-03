@@ -2,28 +2,55 @@
 
 ## Task1
 
-Question list:
+Question list
 
-1. Can the sponsor increase or decrease the subsidy?
-   - So, as a student, I don’t really know the answer to that. I would probably say yes, but unfortunately I can’t give a specific answer.
+1. What is the ambiguity?
+2. If you interviewed a lab demonstrator about this ambiguity, what was the question you asked them regarding it?
+3. If you interviewed a lab demonstrator about this ambiguity, what is the exact answer you were given?
+4. If the ambiguity was not (fully) addressed by your lab demonstrator interview, or it was not relevant for students, which other stakeholders would you approach and how would you approach them (i.e. what requirements elicitation techniques would you use) to clarify it? In the unavailability of these stakeholders, what assumptions are you making for the purpose of this coursework?
 
-2. Preference feature; perhaps the event provider should be required to "tag" performances with a certain amount of relevant keywords from a predetermined list. Students could then select which tags they are interested in and the system would display events in order of number of matching tags?
-   - You would have a preference for that performance, right, and that could be up to three event types, such as music, movies, or sports. You could also choose to have no preferences at all when searching. So that would probably be implemented as a tagging feature
+Ambiguities:
 
-3. Are admins able to edit all details of the events, such as price, location, time etc. ?
-   - So, as a student, I don’t know the answer to that, but the EP should be able to change the time and the booking date as well. I don’t know the specifics on the other side
-
-4. For the review part, Is the rating 1-5 stars or simply a like/dislike?
-   - When a performance I have booked has taken place, or after I have attended it, I would like to be able to leave a review. The review should include a mandatory rating from one to five stars and an optional free-text comment. This review should be associated with the event and indicate the specific performance I attended
-
-5. For tickets that are fully sponsored (purchased for free), is it still necessary to call an external payment interface, or can the reservation number be issued directly by the App?
-   - So, are you referring to cases where the cost is fully covered by the sponsor? As a student, I am not entirely sure, but it would probably make sense for them to receive an automatic reference. That seems like a good idea.
-
-6. Can EP give the address of performance as pending status?
-   - So I can’t really answer that as a student, because that would be the EP’s responsibility, but I would say that it’s a good idea, yes
-
-7. Can entertainment provider enable to see contact details of audiences
-   - Again, I can’t answer that, but my preference would be that, if the user gives consent to share other information about themselves, then yes. Otherwise, it should be limited to only their email and their name
+1. About Subsidy
+   - Q1: We don’t know how to treat the case when university admin staff increase or decrease the sponsors.
+   - Q2: Can the sponsor increase or decrease the subsidy?
+   - Q3: No, since it's not fair to those students who buy the tickets early.
+   - Q4: The lab demonstrator doesn’t address it for us, so our assumption is we assume University admin staff only has one chance to set the sponsors.
+   - Demonstrator Answer: So, as a student, I don’t really know the answer to that. I would probably say yes, but unfortunately I can’t give a specific answer.
+2. About Tags
+   - Q1: What’s the preference system should look like?
+   - Q2: Do we need to provide a preference feature when students list all performances? Perhaps the event provider should be required to "tag" performances with a certain amount of relevant keywords from a predetermined list. Students could then select which tags they are interested in and the system would display events in order of number of matching tags?
+   - Q3: You would have a preference for that performance, right, and that could be up to three event types, such as music, movies, or sports. You could also choose to have no preferences at all when searching. So that would probably be implemented as a tagging feature.
+   - Q4: The Demonstrator agreed to this. We have decided to add this feature in the form of a filter style option that the student can apply when looking through events. The student will be allowed to choose preferred tags and the most relevant activities will be displayed first.
+3. About EP’s Editing
+   - Q1: We don’t know the editable range of EP
+   - Q2: Are EP able to edit all details of the events, such as price, location, time?
+   - Q3: EP should only allow editing of a portion of the event information
+   - Q4: The demonstrator is not clear on that, we made an assumption that the EP could not change the ticket price
+   - Demonstrator Answer: So, as a student, I don’t know the answer to that, but the EP should be able to change the time and the booking date as well. I don’t know the specifics on the other side
+4. About Pending Address
+   - Q1: We want to know whether the place of a performance could be pending
+   - Q2: Can EP give the address of performance as pending status?
+   - Q3: We think the address could be pending, as we make assumption that EP could change the location of a performance
+   - Q4: The Demonstrator can’t give us an exact answer, we made assumption that this option is available
+   - Demonstrator Answer: So I can’t really answer that as a student, because that would be the EP’s responsibility, but I would say that it’s a good idea, yes
+5. About reviewing system
+   - Q1: How do we design our reviewing system
+   - Q2: So for the students’ review part is the rating could be like one to five star or simple like or dislike?
+   - Q3: Demonstrator mentioned that an optional review field allowing the student to rate an event from 1-5 and leave a comment would be preferable.
+   - Q4: The assumption here is that a review feature would be useful for the students, and so we have included it in our requirements.
+6. About Fully Sponsored Performance
+   - Q1: We are not sure about the free ticket, does it need to call the external payment system?
+   - Q2: For tickets that are fully sponsored (purchased for free), is it still necessary to call an external payment interface, or can the reservation number be issued directly by the App?
+   - Q3: We don’t have to call payment system
+   - Q4: The Demonstrator is not sure about this, he says that an automatic generated reference seems a good idea, we keep this assumption
+   - Demonstrator Answer: So, are you referring to cases where the cost is fully covered by the sponsor? As a student, I am not entirely sure, but it would probably make sense for them to receive an automatic reference. That seems like a good idea.
+7. About Privacy
+   - Q1: We want find out how much privacy could EP obtain in booking
+   - Q2: Can entertainment providers be able to see contact details of audiences?
+   - Q3: EP can only obtain email address and names
+   - Q4: The Demonstrator is not sure about this, he agreed that only these two are fair, so we keep our assumption.
+   - Demonstrator Answer: Again, I can’t answer that, but my preference would be that, if the user gives consent to share other information about themselves, then yes. Otherwise, it should be limited to only their email and their name
 
 ## Task2
 
