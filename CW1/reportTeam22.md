@@ -91,7 +91,7 @@ Ambiguities:
      - The external system returns a failure message or the user cancels the payment
      - System Notifies the student that the booking was not successful and no tickets were reserved.
 
-- Use Case Name: Cancel booking
+- Use Case Name: Cancel booking before 24h
 - Primary actor: Student
 - Supporting actors: External Payment System
 - Summary:
@@ -212,7 +212,7 @@ Ambiguities:
    2. Robustness:
       1. The system shall ensure that no booking record is created if payment processing fails or times out
 
-2. Use Case Name: Cancel Booking
+2. Use Case Name: Cancel booking before 24h
    1. Security:
       1. The system must verify that the booking number belongs to the requesting student before allowing cancellation
 
