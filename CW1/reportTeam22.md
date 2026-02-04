@@ -198,7 +198,7 @@ Ambiguities:
 - Use Case: Cancel Performance
 - Primary Actor: Entertainment Provider
 - Supporting Actors: External Payment System
-- Summary: While viewing a performance in detail, an entertainment provider will have the option to “cancel” provided they are logged in as the one that originally created the performance. On required input, they are asked to confirm that they wish to cancel the performance. Once confirmed, the system gets details of all bookings already made for the specific event and notifies the payment system to issue the necessary refund(s).
+- Summary: While viewing a performance in detail, an entertainment provider will have the option to "cancel" provided they are logged in as the one that originally created the performance. On required input, they are asked to confirm that they wish to cancel the performance. Once confirmed, the system gets details of all bookings already made for the specific event and notifies the payment system to issue the necessary refund(s).
 
 <br><br>
 
@@ -230,7 +230,7 @@ Ambiguities:
    3. Platform Compatibility
       1. The system interface shall scale with the users’ screen size.
    4. Performance
-      1. Under normal wifi and database conditions, the system should load all sorted performance entries within 2 seconds of the student pressing “apply”.
+      1. Under normal wifi and database conditions, the system should load all sorted performance entries within 2 seconds of the student pressing "apply".
 
 4. Use Case Name: Create event
    1. Robustness
@@ -253,6 +253,8 @@ Ambiguities:
    4. Usability
       1. Performance cancellation should be intuitive to use, while still preventing accidental cancellations.
 
+<br><br>
+
 # Task5
 
 ## Reflection on teamwork
@@ -261,4 +263,10 @@ We initially created a Whatsapp group chat to coordinate the coursework; this wo
 
 ## Reflection on the quality of your work
 
+We have made a strong attempt to meet the requirements set out by the coursework instructions and the marking scheme, to a good amount of success. Two of us have participated in the interview, recording it, which allowed us to obtain accurate information on various ambiguities we discovered beforehand. While we didn't find any ambiguities to add later to the first section, we did try to fully address 7 ambiguities to the best of our ability based on the instructions. Our use case diagram has been designed to cover all the use cases we found, with the diagram allowing us to put into practice the details we have been taught from lectures, allowing us to make a diagram that follows the correct practices. Task 3 has been completed following the instructions for groups of 4, while also following the instruction to follow the format we were presented in tutorial 2. Alongside this, 5 non-functional requirements were listed, with an attempt to cover as many categories for the requirements as we could find.
+
+Overall, the work we did on this coursework has provided various valuable skills for us. The interview gave us insight on how to produce adequate questions to ask, which can be useful in situations where the topic may be something outside of our knowledge. It also gave us knowledge on how to conduct an interview with real stakeholders. Working on the use case diagram allowed us to learn how to utilise our knowledge from the lecture, to use in future situations where we may need to plan similar projects. While there was sufficient work on this document, it may have been improved if each section was split between members instead of entire sections. This way, every member would have gained experience with the interview, or with the UML diagram. Next time, we will also consider the position of the stakeholder to not ask questions they may not be able to answer.
+
 ## Reflection on the approach taken
+
+This was a Project-based SE product, although some Product-based methods were used, as not all changes were vetted through the university. Our team adopted Agile process and document-centric approach, using the tutorial 2 template to detail complex use cases. The list of functional requirements was expanded by attempting to clear up ambiguities found throughout the system description, which were subsequently addressed at the student representative interview. Although the representative could not fully address a large amount of queries fully, some of our assumptions proved the need for additional functionality, such as the addition of the review system and adjustments to what an EP may edit about a performance once it is posted. The UML graph was a noticeably useful part of the process as it provided a simple overview of the project actors and use cases, causing it to be easier to perform further tasks, largely further defining non-functional requirements in task 4. This approach was effective for meeting the coursework’s requirements but proved difficult for a member joining late. While we followed the "intern at AcmeCorp" persona to maintain professionalism, the lack of a clear "Coursework manager" role meant that the communication issues wasn’t addressed until it was late. We learned that we need a more agile and inclusive communication style. In the future coursework, we would rotate the "meeting chair" role weekly/daily. This would ensure that one person is always responsible for checking in on everyone’s progress and feelings.
