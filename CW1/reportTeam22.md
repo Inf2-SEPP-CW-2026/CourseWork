@@ -52,9 +52,11 @@ Ambiguities:
    - Q4: The Demonstrator is not sure about this, he agreed that only these two are fair, so we keep our assumption.
    - Demonstrator Answer: Again, I can’t answer that, but my preference would be that, if the user gives consent to share other information about themselves, then yes. Otherwise, it should be limited to only their email and their name
 
+   <br>
+
 ## Task2
 
-- <img src="./UML.png" alt="UML Graph" width="600">
+- <img src="./UML.png" alt="UML Graph" width="560">
 
 ## Task3
 
@@ -98,11 +100,13 @@ Ambiguities:
   1. The student is logged into the system
   2. A booking with the given booking number exists.
   3. The performance is at least 24 hours away
-
 - Trigger: The student requests to cancel a booking
 - Guarantee:
   - Success: The booking is cancelled and a refund request is sent
   - Failure: The booking remains active
+
+<br><br>
+
 - Main Success Scenario:
   1. Student enters a booking number
   2. System verifies that the booking exists and belongs to the student
@@ -117,6 +121,8 @@ Ambiguities:
      - The System displays an error and ends the use case unsuccessfully
   2. 3a. Less than 24 hours before performance
      - The system denies cancellation and informs the student.
+
+<br><br>
 
 ### 1b
 
@@ -138,6 +144,9 @@ Ambiguities:
   4. System checks the price of tickets and ensures the change has been made
   5. System sends notice of change to External Payment System
   6. System confirms price reduction to Admin
+
+<br><br><br><br><br><br>
+
 - Extensions:
   1. 2a. Admin enters invalid amount to reduce by.
      - Return to step 1
@@ -190,6 +199,8 @@ Ambiguities:
 - Primary Actor: Entertainment Provider
 - Supporting Actors: External Payment System
 - Summary: While viewing a performance in detail, an entertainment provider will have the option to “cancel” provided they are logged in as the one that originally created the performance. On required input, they are asked to confirm that they wish to cancel the performance. Once confirmed, the system gets details of all bookings already made for the specific event and notifies the payment system to issue the necessary refund(s).
+
+<br><br>
 
 ## Task 4
 
