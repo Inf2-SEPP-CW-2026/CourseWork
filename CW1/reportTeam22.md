@@ -221,6 +221,27 @@ Ambiguities:
    4. Performance
       1. Under normal wifi and database conditions, the system should load all sorted performance entries within 2 seconds of the student pressing “apply”.
 
+4. Use Case Name: Create event
+   1. Robustness
+      1. Event titles with special characters should function normally.
+   2. Performance
+      1. The system should not create duplicate events from the same request.
+   3. Interoperability
+      1. The system & other devices should be able to correctly decode the input title.
+   4. Usability
+      1. Event creation should be intuitive to use by having input labeled for the user, allowing them to create events faster.
+
+5. Use Case Name: Cancel Performance
+   1. Robustness
+      1. The system should result in either everyone being refunded and the performance cancellation, or the request denied.
+      2. While the cancellation is happening, the system should not accept new students booking the event.
+   2. Security
+      1. The cancellation instruction should be encrypted to prevent eavesdropping.
+   3. performance
+      1. The cancellation should typically happen within 5 mins of the instruction to prevent students from trying to book the event.
+   4. Usability
+      1. Performance cancellation should be intuitive to use, while still preventing accidental cancellations.
+
 # Task5
 
 ## Reflection on teamwork
