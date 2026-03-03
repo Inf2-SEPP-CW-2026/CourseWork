@@ -54,8 +54,6 @@ jobs:
             relative_dir="$(dirname "$relative")"
             base="$(basename "${relative%.*}")"
 
-            java -jar plantuml.jar -tpng "$file"
-
             if [ "$relative_dir" = "." ]; then
               target_dir="CW2/ExportIMG"
             else
@@ -63,7 +61,8 @@ jobs:
               mkdir -p "$target_dir"
             fi
 
-            mv "${file%.*}.png" "$target_dir/${base}.png"
+            target_file="$target_dir/${base}.png"
+            java -jar plantuml.jar -tpng -pipe < "$file" > "$target_file"
           done < <(find CW2 -path "CW2/ExportIMG" -prune -o -type f -iname "*.puml" -print0)
 
           find CW2/ExportIMG -depth -mindepth 1 -type d -empty -delete
