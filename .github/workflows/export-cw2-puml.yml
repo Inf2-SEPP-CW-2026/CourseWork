@@ -14,16 +14,17 @@ on:
 
 permissions:
   contents: write
+  actions: read
 
 jobs:
   export:
-    if: ${{ github.repository == 'Inf2-SEPP-CW-2026/CourseWork' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
+    if: ${{ github.repository == 'Inf2-SEPP-CW-2026/CourseWork' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.head_ref || github.ref }}
+          ref: ${{ github.event_name == 'pull_request' && format('refs/pull/{0}/head', github.event.pull_request.number) || github.ref }}
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -71,10 +72,18 @@ jobs:
             echo "No .puml files found under CW2."
           fi
 
-      - name: Commit exported PNGs back to PR branch
-        if: ${{ github.event_name == 'pull_request' }}
+      - name: Upload exported PNGs for fork PRs
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: exported-png-pr-${{ github.event.pull_request.number }}
+          path: CW2/ExportIMG
+          if-no-files-found: warn
+
+      - name: Commit exported PNGs back to source branch
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
         env:
-          BRANCH_NAME: ${{ github.event.pull_request.head.ref }}
+          BRANCH_NAME: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref_name }}
         run: |
           set -euo pipefail
 
