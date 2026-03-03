@@ -11,7 +11,6 @@ on:
       - "CW2/*.puml"
       - "CW2/**/*.puml"
       - ".github/workflows/export-cw2-puml.yml"
-  workflow_dispatch:
 
 permissions:
   contents: write
