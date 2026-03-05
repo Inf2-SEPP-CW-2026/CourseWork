@@ -1,0 +1,76 @@
+---
+config:
+  layout: elk
+---
+
+sequenceDiagram
+%% autonumber
+title Book Performance
+
+actor Student
+participant GeneralController
+participant AuthorisationService
+participant StudentController
+participant EventRepository
+participant Booking
+participant BookingRepository
+participant PaymentSystem
+
+activate Student
+Student ->> GeneralController: asStudent()
+activate GeneralController
+GeneralController ->> AuthorisationService: requireRole(session, Student)
+
+activate AuthorisationService
+
+alt not logged in or wrong role
+    AuthorisationService -->> GeneralController: error
+    GeneralController -->> Student: error, not authorised
+else authorised
+    AuthorisationService -->> GeneralController: ok
+    deactivate AuthorisationService
+    GeneralController -->> Student: StudentController
+    deactivate GeneralController
+end
+
+Student ->> StudentController: bookPerformance(performanceID, numTickets, contactEmail, contactPhone)
+activate StudentController
+
+StudentController -->> EventRepository: findPerformance(performanceID)
+activate EventRepository
+
+alt performance not found
+    EventRepository -->> StudentController: null
+    StudentController -->> Student: false (invalid performanceID)
+else performance found
+    EventRepository -->> StudentController: performance
+    deactivate EventRepository
+    alt [performance.isTicketed]
+        StudentController ->> Booking: new(studentName, performanceID, numTickets, contactEmail, contactPhone)
+        activate Booking
+        Booking -->> StudentController: booking
+        deactivate Booking
+        StudentController -->> BookingRepository: addBooking(booking)
+        activate BookingRepository
+        BookingRepository --> PaymentSystem: processPayment(performance.ticketPrice * numTickets, userID)
+        activate PaymentSystem
+        PaymentSystem -->> BookingRepository: success / failure
+        deactivate PaymentSystem
+        alt payment successful
+            BookingRepository ->> Booking: setAmountPaid(performance.ticketPrice * numTickets)
+            activate Booking
+            Booking -->> BookingRepository: void
+            deactivate Booking
+            BookingRepository -->> StudentController: done
+            StudentController -->> Student: true
+        else payment failed
+            BookingRepository -->> StudentController: error
+            deactivate BookingRepository
+            StudentController -->> Student: false (payment failed)
+        end
+    else not [performance.isTicketed]
+        StudentController -->> Student: false (performance not ticketed)
+        deactivate StudentController
+    end
+end
+deactivate Student
