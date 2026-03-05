@@ -169,6 +169,7 @@ class Student {
 
 class Performance {
   - performanceID: String
+  - eventID: String
   - startDateTime: Date
   - endDateTime: Date
   - performerNames: Collection<String>
@@ -189,6 +190,8 @@ class Performance {
 
 class Booking {
   - bookingNumber: String
+  - performanceID: String
+  - userID: String
   - numTickets: int
   - studentName: String
   - contactEmail: String
@@ -198,6 +201,7 @@ class Booking {
 
 class Review {
   - performanceID: String
+  - userID: String
   - rating: int
   - comment: String
 }
