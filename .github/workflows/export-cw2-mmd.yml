@@ -43,6 +43,12 @@ jobs:
         run: |
           npm install -g @mermaid-js/mermaid-cli
 
+      - name: Create Puppeteer config (no sandbox)
+        run: |
+          cat > /tmp/mermaid-puppeteer-config.json <<'EOF'
+          {"args":["--no-sandbox","--disable-setuid-sandbox"]}
+          EOF
+
       - name: Export .mmd files to CW2/ExportIMG as PNG
         run: |
           set -euo pipefail
@@ -64,7 +70,7 @@ jobs:
             fi
 
             target_file="$target_dir/${base}.png"
-            mmdc -i "$file" -o "$target_file" -t neutral -C CW2/mermaid.css
+            mmdc -i "$file" -o "$target_file" -t neutral -C CW2/mermaid.css -p /tmp/mermaid-puppeteer-config.json
           done < <(find CW2 -path "CW2/ExportIMG" -prune -o -type f -iname "*.mmd" -print0)
 
           find CW2/ExportIMG -depth -mindepth 1 -type d -empty -delete
