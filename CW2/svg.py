@@ -1,7 +1,7 @@
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
-svg_path = Path("/Users/XXXXRT/Desktop/UoE/SEPP/CourseWork/CW2/Task2.svg")
+svg_path = Path("/Users/XXXXRT/Desktop/UoE/SEPP/CourseWork/CW2/Task2_1.svg")
 root = ET.parse(svg_path).getroot()
 
 colors = ["#E53935", "#1E88E5", "#43A047", "#FB8C00", "#8E24AA"]
