@@ -8,13 +8,19 @@ participant AdminStaffController
 participant EventRepository
 participant Performance
 
+activate AdminStaff
 AdminStaff ->> EventsAppView: sponsorPerformance(session, performanceID, amount)
+activate EventsAppView
 EventsAppView ->> ControllerFactory: getController(session)
+activate ControllerFactory
 ControllerFactory -->> EventsAppView: AdminStaffController
+deactivate ControllerFactory
 
 EventsAppView ->> AdminStaffController: sponsorPerformance(performanceID, amount)
+activate AdminStaffController
 
 AdminStaffController ->> EventRepository: findPerformance(performanceID)
+activate EventRepository
 alt performance not found
     EventRepository -->> AdminStaffController: error
     AdminStaffController -->> EventsAppView: displayError(error)
@@ -26,15 +32,22 @@ else performance found
         EventsAppView -->> AdminStaff: error (performance not ticketed)
     else ticketed
         AdminStaffController ->> Performance: canBeSponsored(amount)
+        activate Performance
         Performance -->> AdminStaffController: eligible / not eligible
+        deactivate Performance
         alt invalid amount
             AdminStaffController -->> EventsAppView: displayError(invalid amount)
             EventsAppView -->> AdminStaff: error (invalid amount)
         else valid amount
             AdminStaffController ->> EventRepository: applySponsorship(performanceID, amount)
             EventRepository -->> AdminStaffController: done
+            deactivate EventRepository
             AdminStaffController -->> EventsAppView: displayConfirmation(sponsored)
+            deactivate AdminStaffController
             EventsAppView -->> AdminStaff: success
+            deactivate EventsAppView
         end
     end
 end
+
+deactivate AdminStaff
