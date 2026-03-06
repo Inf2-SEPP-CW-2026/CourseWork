@@ -10,6 +10,8 @@ on:
     paths:
       - "CW2/*.mmd"
       - "CW2/**/*.mmd"
+      - "!CW2/*.no_render.mmd"
+      - "!CW2/**/*.no_render.mmd"
       - ".github/workflows/export-cw2-mmd.yml"
   push:
     branches:
@@ -17,6 +19,8 @@ on:
     paths:
       - "CW2/*.mmd"
       - "CW2/**/*.mmd"
+      - "!CW2/*.no_render.mmd"
+      - "!CW2/**/*.no_render.mmd"
       - ".github/workflows/export-cw2-mmd.yml"
   workflow_dispatch:
 

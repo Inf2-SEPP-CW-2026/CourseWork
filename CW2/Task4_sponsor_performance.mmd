@@ -1,85 +1,54 @@
 sequenceDiagram
-title SponsorPerformance
+title Sponsor Performance
 
 actor AdminStaff
-participant GeneralController
-participant AuthorisationService
+participant EventsAppView
+participant ControllerFactory
 participant AdminStaffController
 participant EventRepository
-participant BookingRepository
-participant PaymentSystem
 participant Performance
 
-Note over AdminStaff: The trigger bundles performanceID and amount<br/>into one message to match the coursework's<br/>single-threaded burst assumption.
+AdminStaff ->> EventsAppView: sponsorPerformance(session, performanceID, amount)
+activate EventsAppView
+EventsAppView ->> ControllerFactory: getController(session)
+activate ControllerFactory
+ControllerFactory -->> EventsAppView: AdminStaffController
+deactivate ControllerFactory
 
-AdminStaff ->> GeneralController: asAdminStaff()
-activate AdminStaff
-activate GeneralController
-GeneralController ->> AuthorisationService: requireRole(session, AdminStaff)
-
-alt not logged in or wrong role
-    activate AuthorisationService
-    AuthorisationService -->> GeneralController: error
-    deactivate AuthorisationService
-    GeneralController -->> AdminStaff: error, not authorised
-else authorised
-    GeneralController -->> AdminStaff: AdminStaffController
-    deactivate GeneralController
-end
-
-AdminStaff ->> AdminStaffController: sponsorPerformance(performanceID, amount)
+EventsAppView ->> AdminStaffController: sponsorPerformance(performanceID, amount)
 activate AdminStaffController
 
 AdminStaffController ->> EventRepository: findPerformance(performanceID)
 activate EventRepository
-EventRepository -->> AdminStaffController: performance
-deactivate EventRepository
-
 alt performance not found
-    AdminStaffController -->> AdminStaff: sponsorship failed (invalid performanceID)
+    EventRepository -->> AdminStaffController: error
+    deactivate EventRepository
+    AdminStaffController -->> EventsAppView: displayError(error)
+    EventsAppView -->> AdminStaff: error (invalid performanceID)
 else performance found
-    AdminStaffController ->> EventRepository: applySponsorship(performanceID, amount)
-    activate EventRepository
-    EventRepository ->> Performance: canbeSponsored(amount)
-    activate Performance
-    Performance -->> EventRepository: sponsorship eligibility
-    deactivate Performance
-
-    alt sponsorship rejected
-        EventRepository -->> AdminStaffController: rejected
-        AdminStaffController -->> AdminStaff: sponsorship failed (invalid sponsor amount)
-    else sponsorship approved
-        EventRepository -->> AdminStaffController: approved
-        deactivate EventRepository
-        AdminStaffController ->> Performance: applySponsorship(amount)
+    EventRepository -->> AdminStaffController: performance
+    deactivate EventRepository
+    alt not ticketed
+        AdminStaffController -->> EventsAppView: displayError(not ticketed)
+        EventsAppView -->> AdminStaff: error (performance not ticketed)
+    else ticketed
+        AdminStaffController ->> Performance: canBeSponsored(amount)
         activate Performance
-        Performance -->> AdminStaffController: void
+        Performance -->> AdminStaffController: eligible / not eligible
         deactivate Performance
-        AdminStaffController ->> BookingRepository: findByPerformance(performanceID)
-        activate BookingRepository
-        BookingRepository -->> AdminStaffController: bookings
-        deactivate BookingRepository
-        alt has bookings
-            loop for each booking
-                AdminStaffController ->> PaymentSystem: processRefund(booking.amountPaid - Performance.ticketPrice, booking.contactEmail, messageToStudents)
-                activate PaymentSystem
-                PaymentSystem -->> AdminStaffController: success / failure
-                deactivate PaymentSystem
-                alt PaymentSystem success
-                    AdminStaffController ->> booking: setAmountPaid(Performance.ticketPrice)
-                    activate booking
-                    booking -->> AdminStaffController: void
-                    deactivate booking
-                else PaymentSystem failure
-                    AdminStaffController -->> AdminStaff: sponsorship failed (refund failed)
-                end
-            end
+        alt invalid amount
+            AdminStaffController -->> EventsAppView: displayError(invalid amount)
+            EventsAppView -->> AdminStaff: error (invalid amount)
+        else valid amount
+            AdminStaffController ->> EventRepository: applySponsorship(performanceID, amount)
+            activate EventRepository
+            EventRepository -->> AdminStaffController: done
+            deactivate EventRepository
+            AdminStaffController -->> EventsAppView: displayConfirmation(sponsored)
+            EventsAppView -->> AdminStaff: success
         end
     end
 end
 
-AdminStaffController -->> AdminStaff: sponsorship successful
-
-
 deactivate AdminStaffController
-deactivate AdminStaff
+deactivate EventsAppView
