@@ -9,7 +9,13 @@
         "compile"
       ],
       "options": {
-        "cwd": "${workspaceFolder}/CW3"
+        "cwd": "${workspaceFolder}/CW3",
+        "shell": {
+          "executable": "/bin/zsh",
+          "args": [
+            "-lic"
+          ]
+        }
       },
       "group": "build"
     },
@@ -21,7 +27,13 @@
         "test"
       ],
       "options": {
-        "cwd": "${workspaceFolder}/CW3"
+        "cwd": "${workspaceFolder}/CW3",
+        "shell": {
+          "executable": "/bin/zsh",
+          "args": [
+            "-lic"
+          ]
+        }
       },
       "group": {
         "kind": "test",
@@ -36,7 +48,13 @@
         "package"
       ],
       "options": {
-        "cwd": "${workspaceFolder}/CW3"
+        "cwd": "${workspaceFolder}/CW3",
+        "shell": {
+          "executable": "/bin/zsh",
+          "args": [
+            "-lic"
+          ]
+        }
       },
       "group": "build"
     },
@@ -49,7 +67,13 @@
         "test"
       ],
       "options": {
-        "cwd": "${workspaceFolder}/CW3"
+        "cwd": "${workspaceFolder}/CW3",
+        "shell": {
+          "executable": "/bin/zsh",
+          "args": [
+            "-lic"
+          ]
+        }
       },
       "group": "test"
     }
