@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SVG to PNG Exporter</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 24px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .panel {
+      border: 1px solid #8884;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    label {
+      font-weight: 600;
+    }
+
+    input[type="number"] {
+      width: 100px;
+      padding: 6px 8px;
+    }
+
+    button {
+      padding: 8px 14px;
+      cursor: pointer;
+    }
+
+    .preview-wrap {
+      border: 1px solid #8884;
+      border-radius: 12px;
+      min-height: 300px;
+      padding: 16px;
+      overflow: auto;
+      background:
+        linear-gradient(45deg, #00000008 25%, transparent 25%, transparent 75%, #00000008 75%),
+        linear-gradient(45deg, #00000008 25%, transparent 25%, transparent 75%, #00000008 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 10px 10px;
+    }
+
+    .preview-wrap svg {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .meta {
+      font-size: 14px;
+      opacity: 0.85;
+    }
+
+    .error {
+      color: #c62828;
+      white-space: pre-wrap;
+    }
+
+    .success {
+      color: #2e7d32;
+    }
+
+    .hint {
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      font-family: monospace;
+      font-size: 13px;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>SVG to PNG Exporter</h1>
+
+    <div class="panel">
+      <div class="row">
+        <label for="fileInput">Select SVG file</label>
+        <input id="fileInput" type="file" accept=".svg,image/svg+xml" />
+      </div>
+
+      <div class="row">
+        <label for="scaleInput">Scale</label>
+        <input id="scaleInput" type="number" min="0.1" step="0.1" value="2" />
+
+        <label for="fileNameInput">Output name</label>
+        <input id="fileNameInput" type="text" value="output.png" style="width: 180px; padding: 6px 8px;" />
+
+        <button id="exportBtn" disabled>Export PNG</button>
+      </div>
+
+      <div class="meta" id="metaInfo">No file loaded.</div>
+      <div id="status" class="hint"></div>
+    </div>
+
+    <div class="panel">
+      <div class="row">
+        <strong>Preview</strong>
+      </div>
+      <div id="preview" class="preview-wrap"></div>
+    </div>
+
+    <div class="panel">
+      <div class="row">
+        <strong>Loaded SVG source</strong>
+      </div>
+      <textarea id="sourceView" readonly placeholder="SVG source will appear here..."></textarea>
+    </div>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById("fileInput");
+    const scaleInput = document.getElementById("scaleInput");
+    const fileNameInput = document.getElementById("fileNameInput");
+    const exportBtn = document.getElementById("exportBtn");
+    const preview = document.getElementById("preview");
+    const metaInfo = document.getElementById("metaInfo");
+    const status = document.getElementById("status");
+    const sourceView = document.getElementById("sourceView");
+
+    let currentSvgText = null;
+    let currentFileNameBase = "output";
+
+    // 读取本地 SVG 文件文本
+    async function readFileAsText(file) {
+      return await file.text();
+    }
+
+    // 确保 svg 根节点有命名空间
+    function normalizeSvgText(svgText) {
+      let text = svgText.trim();
+
+      // 支持 <svg> 和 <prefix:svg>
+      const hasSvgRoot = /^<([a-zA-Z_][\w.-]*:)?svg\b/i.test(text);
+
+      if (!hasSvgRoot) {
+        const match = text.match(
+          /<([a-zA-Z_][\w.-]*:)?svg\b[\s\S]*<\/([a-zA-Z_][\w.-]*:)?svg>/i
+        );
+        if (!match) {
+          throw new Error("The selected file does not contain a valid SVG root element.");
+        }
+        text = match[0];
+      }
+
+      // 不要删 xmlns:ns0
+      // 不要把 <ns0:svg> 改成 <svg>
+
+      // 如果整个文档里完全没有 SVG namespace，才补一个默认 namespace
+      const hasAnySvgNamespace =
+        /xmlns(?::[a-zA-Z_][\w.-]*)?="http:\/\/www\.w3\.org\/2000\/svg"/i.test(text);
+
+      if (!hasAnySvgNamespace) {
+        text = text.replace(
+          /^<([a-zA-Z_][\w.-]*:)?svg\b/i,
+          (m) => `${m} xmlns="http://www.w3.org/2000/svg"`
+        );
+      }
+
+      return text;
+    }
+
+    // 从文本解析 svg 元素
+    function parseSvgElement(svgText) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(svgText, "image/svg+xml");
+
+      const parserError = doc.querySelector("parsererror");
+      if (parserError) {
+        throw new Error("Failed to parse SVG:\n" + parserError.textContent);
+      }
+
+      const svg = doc.documentElement;
+      if (!svg || String(svg.localName).toLowerCase() !== "svg") {
+        throw new Error("Parsed document is not a valid SVG.");
+      }
+
+      return svg;
+    }
+
+    function parseNumericLength(value) {
+      if (!value) return NaN;
+      const text = String(value).trim();
+      if (/%\s*$/.test(text)) return NaN;
+      const m = text.match(/^([0-9]*\.?[0-9]+)/);
+      return m ? Number(m[1]) : NaN;
+    }
+    
+    // 获取导出尺寸
+    function getSvgSize(svgElement) {
+      const widthAttr = svgElement.getAttribute("width");
+      const heightAttr = svgElement.getAttribute("height");
+      const viewBoxAttr = svgElement.getAttribute("viewBox");
+
+      const parseViewBox = (value) => {
+        if (!value) return null;
+        const parts = String(value)
+          .trim()
+          .split(/[\s,]+/)
+          .map((part) => Number(part))
+          .filter((num) => Number.isFinite(num));
+        if (parts.length < 4) return null;
+        return { width: parts[2], height: parts[3] };
+      };
+
+      const viewBox =
+        (svgElement.viewBox && svgElement.viewBox.baseVal) || parseViewBox(viewBoxAttr);
+
+      let width = parseNumericLength(widthAttr);
+      let height = parseNumericLength(heightAttr);
+
+      if ((!Number.isFinite(width) || !Number.isFinite(height)) && viewBox) {
+        if (!Number.isFinite(width)) width = viewBox.width;
+        if (!Number.isFinite(height)) height = viewBox.height;
+      }
+
+      if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) {
+        throw new Error(
+          "Cannot determine SVG size. Please ensure the SVG has width/height or viewBox."
+        );
+      }
+
+      return { width, height };
+    }
+
+    function sanitizeSvgForExport(svgElement, width, height) {
+      const SVG_NS = "http://www.w3.org/2000/svg";
+      const clone = svgElement.cloneNode(true);
+
+      // 移除 @font-face，避免部分浏览器将 SVG 判为 tainted
+      clone.querySelectorAll("style").forEach((styleNode) => {
+        const css = styleNode.textContent || "";
+        if (!css.includes("@font-face")) return;
+        styleNode.textContent = css.replace(/@font-face\s*\{[\s\S]*?\}\s*/g, "");
+      });
+
+      // 用 <text> 替换 foreignObject，避免 tainted canvas
+      clone.querySelectorAll("foreignObject").forEach((fo) => {
+        const rawText = (fo.textContent || "").replace(/\s+/g, " ").trim();
+        if (!rawText) {
+          fo.remove();
+          return;
+        }
+
+        const x = Number.parseFloat(fo.getAttribute("x") || "0") || 0;
+        const y = Number.parseFloat(fo.getAttribute("y") || "0") || 0;
+        const w = Number.parseFloat(fo.getAttribute("width") || "0") || 0;
+        const h = Number.parseFloat(fo.getAttribute("height") || "0") || 0;
+
+        const textEl = document.createElementNS(SVG_NS, "text");
+        const textX = w > 0 ? x + w / 2 : x;
+        const textY = h > 0 ? y + h / 2 : y;
+        textEl.setAttribute("x", String(textX));
+        textEl.setAttribute("y", String(textY));
+        if (w > 0) textEl.setAttribute("text-anchor", "middle");
+        if (h > 0) textEl.setAttribute("dominant-baseline", "middle");
+
+        const classSource = fo.querySelector("[class]");
+        if (classSource) {
+          const className = classSource.getAttribute("class");
+          if (className) textEl.setAttribute("class", className);
+        }
+
+        textEl.textContent = rawText;
+
+        const parent = fo.parentNode;
+        if (parent) {
+          parent.insertBefore(textEl, fo);
+          parent.removeChild(fo);
+        }
+      });
+
+      // 确保导出尺寸是数值，避免 100% 之类导致尺寸不稳定
+      if (!Number.isFinite(parseNumericLength(clone.getAttribute("width")))) {
+        clone.setAttribute("width", String(width));
+      }
+      if (!Number.isFinite(parseNumericLength(clone.getAttribute("height")))) {
+        clone.setAttribute("height", String(height));
+      }
+
+      return clone;
+    }
+
+    // 把 SVG 文本转为 PNG Blob
+    async function svgTextToPngBlob(svgText, scale) {
+      const normalized = normalizeSvgText(svgText);
+      const svgElement = parseSvgElement(normalized);
+      const { width, height } = getSvgSize(svgElement);
+      const exportSvg = sanitizeSvgForExport(svgElement, width, height);
+      const serialized = new XMLSerializer().serializeToString(exportSvg);
+
+      const exportWidth = Math.max(1, Math.round(width * scale));
+      const exportHeight = Math.max(1, Math.round(height * scale));
+
+      const blob = new Blob([serialized], {
+        type: "image/svg+xml;charset=utf-8",
+      });
+
+      const url = URL.createObjectURL(blob);
+
+      try {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+
+        await new Promise((resolve, reject) => {
+          img.onload = resolve;
+          img.onerror = () => reject(new Error("Failed to load SVG into an image."));
+          img.src = url;
+        });
+
+        const canvas = document.createElement("canvas");
+        canvas.width = exportWidth;
+        canvas.height = exportHeight;
+
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          throw new Error("Canvas 2D context is not available.");
+        }
+
+        // 清空画布再绘制
+        ctx.clearRect(0, 0, exportWidth, exportHeight);
+        ctx.drawImage(img, 0, 0, exportWidth, exportHeight);
+
+        const pngBlob = await new Promise((resolve, reject) => {
+          canvas.toBlob((result) => {
+            if (result) resolve(result);
+            else reject(new Error("Failed to export canvas to PNG."));
+          }, "image/png");
+        });
+
+        return {
+          pngBlob,
+          sourceWidth: width,
+          sourceHeight: height,
+          exportWidth,
+          exportHeight,
+        };
+      } finally {
+        URL.revokeObjectURL(url);
+      }
+    }
+
+    // 下载文件
+    function downloadBlob(blob, fileName) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // 预览 SVG
+    function renderPreview(svgElement) {
+      preview.innerHTML = "";
+      if (!svgElement) return;
+      const imported = document.importNode(svgElement, true);
+      preview.appendChild(imported);
+    }
+
+    // 更新状态文本
+    function setStatus(message, className = "hint") {
+      status.className = className;
+      status.textContent = message;
+    }
+
+    // 处理文件选择
+    fileInput.addEventListener("change", async (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      try {
+        setStatus("Loading...", "hint");
+
+        const text = await readFileAsText(file);
+        const normalized = normalizeSvgText(text);
+        const svgElement = parseSvgElement(normalized);
+        const { width, height } = getSvgSize(svgElement);
+
+        currentSvgText = normalized;
+        currentFileNameBase = file.name.replace(/\.[^.]+$/, "") || "output";
+
+        if (!fileNameInput.value || fileNameInput.value === "output.png") {
+          fileNameInput.value = currentFileNameBase + ".png";
+        }
+
+        renderPreview(svgElement);
+        sourceView.value = normalized;
+        exportBtn.disabled = false;
+
+        metaInfo.textContent = `Loaded: ${file.name} | Source size: ${width} x ${height}`;
+        setStatus("SVG loaded successfully.", "success");
+      } catch (error) {
+        currentSvgText = null;
+        exportBtn.disabled = true;
+        preview.innerHTML = "";
+        sourceView.value = "";
+        metaInfo.textContent = "No valid file loaded.";
+        setStatus(error.message, "error");
+      }
+    });
+
+    // 导出 PNG
+    exportBtn.addEventListener("click", async () => {
+      if (!currentSvgText) {
+        setStatus("No SVG is loaded.", "error");
+        return;
+      }
+
+      try {
+        const scale = Number(scaleInput.value);
+        if (!Number.isFinite(scale) || scale <= 0) {
+          throw new Error("Scale must be a number greater than 0.");
+        }
+
+        setStatus("Exporting...", "hint");
+
+        const fileName = (fileNameInput.value || currentFileNameBase + ".png").trim();
+        const {
+          pngBlob,
+          sourceWidth,
+          sourceHeight,
+          exportWidth,
+          exportHeight,
+        } = await svgTextToPngBlob(currentSvgText, scale);
+
+        downloadBlob(pngBlob, fileName);
+
+        setStatus(
+          `Export completed. Source: ${sourceWidth} x ${sourceHeight}, PNG: ${exportWidth} x ${exportHeight}`,
+          "success"
+        );
+      } catch (error) {
+        setStatus(error.message, "error");
+      }
+    });
+  </script>
+</body>
+</html>

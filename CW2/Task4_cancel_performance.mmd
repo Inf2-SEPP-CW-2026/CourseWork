@@ -6,17 +6,22 @@ participant EventsAppView
 participant ControllerFactory
 participant EntertainmentProviderController
 participant EventRepository
+participant Performance
 participant BookingRepository
 participant PaymentSystem
-participant Performance
 
+activate EntertainmentProvider
 EntertainmentProvider ->> EventsAppView: cancelPerformance(session, performanceID, messageToStudents)
+activate EventsAppView
 EventsAppView ->> ControllerFactory: getController(session)
+activate ControllerFactory
 ControllerFactory -->> EventsAppView: EntertainmentProviderController
+deactivate ControllerFactory
 
 EventsAppView ->> EntertainmentProviderController: cancelPerformance(performanceID, messageToStudents)
-
+activate EntertainmentProviderController
 EntertainmentProviderController ->> EventRepository: findPerformanceByEP(performanceID, epID)
+activate EventRepository
 alt performance not found
     EventRepository -->> EntertainmentProviderController: error
     EntertainmentProviderController -->> EventsAppView: displayError(error)
@@ -24,16 +29,21 @@ alt performance not found
 else performance found
     EventRepository -->> EntertainmentProviderController: performance
     EntertainmentProviderController ->> Performance: hasTakenPlace(currentTime)
+    activate Performance
     Performance -->> EntertainmentProviderController: result
+    deactivate Performance  
     alt has already taken place
         EntertainmentProviderController -->> EventsAppView: displayError(already taken place)
         EventsAppView -->> EntertainmentProvider: error (already taken place)
     else not taken place
         EntertainmentProviderController ->> BookingRepository: findByPerformance(performanceID)
+        activate BookingRepository
         BookingRepository -->> EntertainmentProviderController: bookings
+        deactivate BookingRepository
         alt no bookings
             EntertainmentProviderController ->> EventRepository: cancelPerformance(performanceID)
             EventRepository -->> EntertainmentProviderController: done
+            deactivate EventRepository
             EntertainmentProviderController -->> EventsAppView: displayConfirmation(canceled)
             EventsAppView -->> EntertainmentProvider: success
         else has bookings
@@ -43,18 +53,19 @@ else performance found
             else message valid
                 loop for each booking
                     EntertainmentProviderController ->> PaymentSystem: processRefundWithMessage(booking.amountPaid, booking.contactInfo.name, booking.contactInfo.contactEmail, booking.contactInfo.contactPhone, messageToStudents)
+                    activate PaymentSystem
                     PaymentSystem -->> EntertainmentProviderController: success / failure
-                end
-                alt all refunds successful
-                    EntertainmentProviderController ->> EventRepository: cancelPerformance(performanceID)
-                    EventRepository -->> EntertainmentProviderController: done
-                    EntertainmentProviderController -->> EventsAppView: displayConfirmation(canceled)
-                    EventsAppView -->> EntertainmentProvider: success
-                else any refund failed
-                    EntertainmentProviderController -->> EventsAppView: displayError(refund failed)
-                    EventsAppView -->> EntertainmentProvider: error (refund failed)
+                    deactivate PaymentSystem
+                    alt any refund failed
+                        EntertainmentProviderController -->> EventsAppView: displayError(refund failed)
+                        deactivate EntertainmentProviderController
+                        EventsAppView -->> EntertainmentProvider: error (refund failed)
+                        deactivate EventsAppView
+                    end 
                 end
             end
         end
     end
 end
+
+deactivate EntertainmentProvider

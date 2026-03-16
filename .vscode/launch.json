@@ -1,0 +1,34 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "CW3: Debug All Tests",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/CW3",
+      "mainClass": "org.junit.platform.console.ConsoleLauncher",
+      "classPaths": [
+        "$Auto"
+      ],
+      "args": [
+        "--scan-class-path",
+        "--details=tree"
+      ]
+    },
+    {
+      "type": "java",
+      "name": "CW3: Debug One Test Class",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/CW3",
+      "mainClass": "org.junit.platform.console.ConsoleLauncher",
+      "classPaths": [
+        "$Auto"
+      ],
+      "args": [
+        "--select-class",
+        "system.LogInSystemTests",
+        "--details=tree"
+      ]
+    }
+  ]
+}
