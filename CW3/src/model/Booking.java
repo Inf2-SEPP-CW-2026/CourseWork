@@ -3,59 +3,53 @@ package model;
 import java.time.LocalDateTime;
 
 /**
- * Booking made by a student for a performance.
+ * Booking entity from the UML diagram.
  */
 public class Booking {
-    private final String bookingId;
-    private final Student student;
-    private final EventPerformance performance;
-    private final int ticketCount;
-    private final double amountPaid;
-    private final LocalDateTime createdAt;
-    private final BookingStatus status;
+  private long bookingNumber;
+  private int numTickets;
+  private double amountPaid;
+  private LocalDateTime bookingDateTime;
+  private BookingStatus status;
+  private Student student;
+  private Performance performance;
 
-    public Booking(
-            String bookingId,
-            Student student,
-            EventPerformance performance,
-            int ticketCount,
-            double amountPaid,
-            LocalDateTime createdAt,
-            BookingStatus status) {
-        this.bookingId = bookingId;
-        this.student = student;
-        this.performance = performance;
-        this.ticketCount = ticketCount;
-        this.amountPaid = amountPaid;
-        this.createdAt = createdAt;
-        this.status = status;
-    }
+  public Booking() {}
 
-    public String getBookingId() {
-        return bookingId;
-    }
+  public Booking(long bookingNumber, int numTickets, double amountPaid,
+      LocalDateTime bookingDateTime, BookingStatus status, Student student,
+      Performance performance) {
+    this.bookingNumber = bookingNumber;
+    this.numTickets = numTickets;
+    this.amountPaid = amountPaid;
+    this.bookingDateTime = bookingDateTime;
+    this.status = status;
+    this.student = student;
+    this.performance = performance;
+  }
 
-    public Student getStudent() {
-        return student;
-    }
+  public void cancelByStudent() {
+    throw new UnsupportedOperationException("cancelByStudent is not implemented yet.");
+  }
 
-    public EventPerformance getPerformance() {
-        return performance;
-    }
+  public void cancelPaymentFailed() {
+    throw new UnsupportedOperationException("cancelPaymentFailed is not implemented yet.");
+  }
 
-    public int getTicketCount() {
-        return ticketCount;
-    }
+  public void cancelByProvider() {
+    throw new UnsupportedOperationException("cancelByProvider is not implemented yet.");
+  }
 
-    public double getAmountPaid() {
-        return amountPaid;
-    }
+  public boolean checkBookedByStudent(String email) {
+    throw new UnsupportedOperationException("checkBookedByStudent is not implemented yet.");
+  }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+  public String getStudentDetails() {
+    throw new UnsupportedOperationException("getStudentDetails is not implemented yet.");
+  }
 
-    public BookingStatus getStatus() {
-        return status;
-    }
+  public String generateBookingRecord() {
+    throw new UnsupportedOperationException("generateBookingRecord is not implemented yet.");
+  }
+
 }

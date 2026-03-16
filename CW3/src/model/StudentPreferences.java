@@ -1,24 +1,47 @@
 package model;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
 /**
- * Preference bundle used to personalise search and recommendations.
+ * Student preferences from the UML diagram.
  */
 public class StudentPreferences {
-    private final Set<String> preferredCategories;
+  private boolean preferMusicEvents;
+  private boolean preferTheaterEvents;
+  private boolean preferDanceEvents;
+  private boolean preferMovieEvents;
+  private boolean preferSportsEvents;
 
-    public StudentPreferences() {
-        this(new HashSet<String>());
-    }
+  public StudentPreferences() {}
 
-    public StudentPreferences(Set<String> preferredCategories) {
-        this.preferredCategories = new HashSet<>(preferredCategories);
-    }
+  public StudentPreferences(boolean preferMusicEvents, boolean preferTheaterEvents,
+      boolean preferDanceEvents, boolean preferMovieEvents, boolean preferSportsEvents) {
+    this.preferMusicEvents = preferMusicEvents;
+    this.preferTheaterEvents = preferTheaterEvents;
+    this.preferDanceEvents = preferDanceEvents;
+    this.preferMovieEvents = preferMovieEvents;
+    this.preferSportsEvents = preferSportsEvents;
+  }
 
-    public Set<String> getPreferredCategories() {
-        return Collections.unmodifiableSet(preferredCategories);
-    }
+  public boolean updatePreferences(String studentRawStringPreferences) {
+    throw new UnsupportedOperationException("updatePreferences is not implemented yet.");
+  }
+
+  public boolean isPreferMusicEvents() {
+    return preferMusicEvents;
+  }
+
+  public boolean isPreferTheaterEvents() {
+    return preferTheaterEvents;
+  }
+
+  public boolean isPreferDanceEvents() {
+    return preferDanceEvents;
+  }
+
+  public boolean isPreferMovieEvents() {
+    return preferMovieEvents;
+  }
+
+  public boolean isPreferSportsEvents() {
+    return preferSportsEvents;
+  }
 }

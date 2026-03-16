@@ -17,6 +17,7 @@
         <maven.compiler.release>17</maven.compiler.release>
         <junit.jupiter.version>5.10.2</junit.jupiter.version>
         <mockito.version>5.12.0</mockito.version>
+        <spotless.formatter.file>${project.basedir}/../.vscode/eclipse-java-google-style.xml</spotless.formatter.file>
     </properties>
 
     <dependencies>
@@ -45,6 +46,22 @@
         <testSourceDirectory>${project.basedir}/tests</testSourceDirectory>
 
         <plugins>
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>3.2.1</version>
+                <configuration>
+                    <java>
+                        <includes>
+                            <include>src/**/*.java</include>
+                            <include>tests/**/*.java</include>
+                        </includes>
+                        <eclipse>
+                            <file>${spotless.formatter.file}</file>
+                        </eclipse>
+                    </java>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

@@ -1,29 +1,48 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+
 /**
- * Student account in the main system.
+ * Student user from the UML diagram.
  */
 public class Student extends User {
-    private final int phoneNumber;
-    private final StudentPreferences preferences;
+  private String name;
+  private int phoneNumber;
+  private final Collection<Booking> bookings;
+  private StudentPreferences preferences;
 
-    public Student(
-            String userId,
-            String displayName,
-            String email,
-            String passwordHash,
-            int phoneNumber,
-            StudentPreferences preferences) {
-        super(userId, displayName, email, passwordHash);
-        this.phoneNumber = phoneNumber;
-        this.preferences = preferences;
-    }
+  public Student() {
+    this.bookings = new ArrayList<>();
+  }
 
-    public int getPhoneNumber() {
-        return phoneNumber;
-    }
+  public Student(String email, String password, String name, int phoneNumber,
+      StudentPreferences preferences) {
+    super(email, password);
+    this.name = name;
+    this.phoneNumber = phoneNumber;
+    this.preferences = preferences;
+    this.bookings = new ArrayList<>();
+  }
 
-    public StudentPreferences getPreferences() {
-        return preferences;
-    }
+  public void addBooking(Booking booking) {
+    bookings.add(booking);
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public int getPhoneNumber() {
+    return phoneNumber;
+  }
+
+  public Collection<Booking> getBookings() {
+    return Collections.unmodifiableCollection(bookings);
+  }
+
+  public StudentPreferences getPreferences() {
+    return preferences;
+  }
 }

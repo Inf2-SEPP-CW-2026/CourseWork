@@ -1,39 +1,48 @@
 package controller;
 
-import command.Command;
-import logging.Logger;
+import java.util.Collection;
+import model.AdminStaff;
+import model.EntertainmentProvider;
+import model.Student;
+import model.User;
+import view.View;
 
 /**
- * Entry point for use-case commands.
+ * Shared base for the concrete controllers in the UML model.
  */
-public class Controller {
-    private final Logger logger;
+public abstract class Controller {
+  protected final View view;
+  protected User currentUser;
 
-    public Controller() {
-        this(Logger.getInstance());
-    }
+  protected Controller(View view) {
+    this.view = view;
+  }
 
-    public Controller(Logger logger) {
-        if (logger == null) {
-            throw new IllegalArgumentException("logger must not be null");
-        }
-        this.logger = logger;
-    }
+  public User getCurrentUser() {
+    return currentUser;
+  }
 
-    /**
-     * Runs a command against the current application context.
-     *
-     * @param command use-case command to run
-     */
-    public void runCommand(Command command) {
-        if (command == null) {
-            throw new IllegalArgumentException("command must not be null");
-        }
-        logger.log("Executing use case: " + command.getName());
-        command.execute(this);
-    }
+  public void setCurrentUser(User currentUser) {
+    this.currentUser = currentUser;
+  }
 
-    public Logger getLogger() {
-        return logger;
-    }
+  private boolean checkCurrentUserIsGuest() {
+    return currentUser == null;
+  }
+
+  private boolean checkCurrentUserIsAdmin() {
+    return currentUser instanceof AdminStaff;
+  }
+
+  private boolean checkCurrentUserIsStudent() {
+    return currentUser instanceof Student;
+  }
+
+  private boolean checkCurrentUserIsEntertainmentProvider() {
+    return currentUser instanceof EntertainmentProvider;
+  }
+
+  public <T> int selectFromMenu(Collection<T> options, String prompt) {
+    throw new UnsupportedOperationException("Menu selection is not implemented yet.");
+  }
 }
