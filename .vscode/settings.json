@@ -1,0 +1,13 @@
+{
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "java.import.maven.enabled": true,
+  "java.import.gradle.enabled": false,
+  "java.project.importOnFirstTimeStartup": "automatic",
+  "java.project.sourcePaths": [
+    "CW3/src",
+    "CW3/tests"
+  ],
+  "java.project.outputPath": "CW3/target/vscode-bin",
+  "maven.executable.preferMavenWrapper": false,
+  "maven.terminal.useJavaHome": true
+}
