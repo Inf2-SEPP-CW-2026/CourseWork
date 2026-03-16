@@ -1,10 +1,19 @@
 package model;
 
 /**
- * Administrative user account.
+ * Admin-staff user from the UML diagram.
  */
 public class AdminStaff extends User {
-    public AdminStaff(String userId, String displayName, String email, String passwordHash) {
-        super(userId, displayName, email, passwordHash);
-    }
+  private String name;
+
+  public AdminStaff() {}
+
+  public AdminStaff(String email, String password, String name) {
+    super(email, password);
+    this.name = name;
+  }
+
+  public String getName() {
+    return name;
+  }
 }

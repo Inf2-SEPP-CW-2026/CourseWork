@@ -1,28 +1,29 @@
 package system;
 
-import command.SponsorPerformanceCommand;
-import controller.Controller;
+import controller.EventPerformanceController;
+import java.util.ArrayList;
+import model.Event;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import view.TextUserInterface;
+import view.View;
 
 /**
  * System-test scaffold for sponsorship.
  */
 public class SponsorPerformanceSystemTests {
-    private Controller controller;
+  private EventPerformanceController eventPerformanceController;
 
-    @BeforeEach
-    void setUp() {
-        controller = new Controller();
-    }
+  @BeforeEach
+  void setUp() {
+    View view = new TextUserInterface();
+    eventPerformanceController = new EventPerformanceController(view, new ArrayList<Event>());
+  }
 
-    @Test
-    @Disabled("TODO: implement sponsorship system tests.")
-    void sponsorCanFundAPerformance() {
-        controller.runCommand(new SponsorPerformanceCommand(
-                "Alumni Association",
-                "performance-1",
-                500.0));
-    }
+  @Test
+  @Disabled("TODO: implement sponsorship system tests.")
+  void sponsorCanFundAPerformance() {
+    eventPerformanceController.sponsorPerformance();
+  }
 }

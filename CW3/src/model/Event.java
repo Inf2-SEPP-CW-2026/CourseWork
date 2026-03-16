@@ -1,48 +1,81 @@
 package model;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Collection;
 
 /**
- * Event aggregate containing one or more performances.
+ * Event aggregate from the UML diagram.
  */
 public class Event {
-    private final String eventId;
-    private final String title;
-    private final String description;
-    private final EntertainmentProvider organiser;
-    private final List<EventPerformance> performances;
+  private long eventID;
+  private String title;
+  private EventType type;
+  private boolean isTicketed;
+  private EntertainmentProvider organiser;
+  private final Collection<Performance> performances;
 
-    public Event(
-            String eventId,
-            String title,
-            String description,
-            EntertainmentProvider organiser) {
-        this.eventId = eventId;
-        this.title = title;
-        this.description = description;
-        this.organiser = organiser;
-        this.performances = new ArrayList<>();
-    }
+  public Event() {
+    this.performances = new ArrayList<>();
+  }
 
-    public String getEventId() {
-        return eventId;
-    }
+  public Event(long eventID, String title, EventType type, boolean isTicketed,
+      EntertainmentProvider organiser) {
+    this.eventID = eventID;
+    this.title = title;
+    this.type = type;
+    this.isTicketed = isTicketed;
+    this.organiser = organiser;
+    this.performances = new ArrayList<>();
+  }
 
-    public String getTitle() {
-        return title;
-    }
+  public Performance createPerformance(long performanceID, LocalDateTime startDateTime,
+      LocalDateTime endDateTime, Collection<String> performerNames, String venueAddress,
+      int venueCapacity, boolean venueIsOutdoors, boolean venueAllowsSmoking, int numTickets,
+      double ticketPrice) {
+    throw new UnsupportedOperationException("createPerformance is not implemented yet.");
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public Performance getPerformanceByID(long performanceID) {
+    throw new UnsupportedOperationException("getPerformanceByID is not implemented yet.");
+  }
 
-    public EntertainmentProvider getOrganiser() {
-        return organiser;
-    }
+  public Collection<String> getInfoOfPerformancesOnDate(LocalDateTime searchDateTime) {
+    throw new UnsupportedOperationException("getInfoOfPerformancesOnDate is not implemented yet.");
+  }
 
-    public List<EventPerformance> getPerformances() {
-        return Collections.unmodifiableList(performances);
-    }
+  private String getOrganiserName() {
+    return organiser == null ? null : organiser.getName();
+  }
+
+  public String getOrganiserEmail() {
+    return organiser == null ? null : organiser.getEmail();
+  }
+
+  public double getAverageRatingOfPerformances() {
+    throw new UnsupportedOperationException(
+        "getAverageRatingOfPerformances is not implemented yet.");
+  }
+
+  public Collection<String> getAllPerformanceReviews() {
+    throw new UnsupportedOperationException("getAllPerformanceReviews is not implemented yet.");
+  }
+
+  private boolean hasPerformanceAtSameTimes(LocalDateTime startDateTime,
+      LocalDateTime endDateTime) {
+    throw new UnsupportedOperationException("hasPerformanceAtSameTimes is not implemented yet.");
+  }
+
+  private void addPerformance(Performance performance) {
+    performances.add(performance);
+  }
+
+  String titleValue() {
+    return title;
+  }
+
+  @Override
+  public String toString() {
+    throw new UnsupportedOperationException("toString is not implemented yet.");
+  }
 }

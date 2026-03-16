@@ -1,10 +1,8 @@
 package model;
 
 /**
- * Lifecycle states for an event performance.
+ * Performance status values from the UML diagram.
  */
 public enum PerformanceStatus {
-    DRAFT,
-    PUBLISHED,
-    CANCELLED
+  ACTIVE, CANCELLED
 }

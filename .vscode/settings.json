@@ -9,5 +9,11 @@
   ],
   "java.project.outputPath": "CW3/target/vscode-bin",
   "maven.executable.preferMavenWrapper": false,
-  "maven.terminal.useJavaHome": true
+  "maven.terminal.useJavaHome": true,
+  "java.format.settings.profile": "GoogleStyle",
+  "java.format.settings.url": "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml",
+  "[java]": {
+    "editor.defaultFormatter": "redhat.java",
+    "editor.formatOnSave": true
+  }
 }

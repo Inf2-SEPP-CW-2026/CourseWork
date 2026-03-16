@@ -1,10 +1,8 @@
 package model;
 
 /**
- * Lifecycle states for a booking.
+ * Booking status values from the UML diagram.
  */
 public enum BookingStatus {
-    ACTIVE,
-    CANCELLED,
-    REFUNDED
+  ACTIVE, CANCELLEDBYSTUDENT, CANCELLEDBYPROVIDER, PAYMENTFAILED
 }

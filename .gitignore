@@ -26,3 +26,6 @@ replay_pid*
 .DS_Store
 CW3/target/
 .mypy_cache/
+flattened
+.pre-commit-cache/
+.m2/

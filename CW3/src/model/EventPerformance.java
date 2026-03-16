@@ -1,61 +1,26 @@
 package model;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 
 /**
- * Individual performance instance for an event.
+ * Compatibility shim for older coursework wording that refers to EventPerformance.
+ *
+ * <p>
+ * The UML diagram uses the class name {@link Performance}, so that is the canonical model class.
  */
-public class EventPerformance {
-    private final String performanceId;
-    private final Event event;
-    private final LocalDateTime startDateTime;
-    private final String venue;
-    private final int capacity;
-    private final double ticketPrice;
-    private final PerformanceStatus status;
+public class EventPerformance extends Performance {
+  public EventPerformance() {
+    super();
+  }
 
-    public EventPerformance(
-            String performanceId,
-            Event event,
-            LocalDateTime startDateTime,
-            String venue,
-            int capacity,
-            double ticketPrice,
-            PerformanceStatus status) {
-        this.performanceId = performanceId;
-        this.event = event;
-        this.startDateTime = startDateTime;
-        this.venue = venue;
-        this.capacity = capacity;
-        this.ticketPrice = ticketPrice;
-        this.status = status;
-    }
-
-    public String getPerformanceId() {
-        return performanceId;
-    }
-
-    public Event getEvent() {
-        return event;
-    }
-
-    public LocalDateTime getStartDateTime() {
-        return startDateTime;
-    }
-
-    public String getVenue() {
-        return venue;
-    }
-
-    public int getCapacity() {
-        return capacity;
-    }
-
-    public double getTicketPrice() {
-        return ticketPrice;
-    }
-
-    public PerformanceStatus getStatus() {
-        return status;
-    }
+  public EventPerformance(long performanceID, LocalDateTime startDateTime,
+      LocalDateTime endDateTime, Collection<String> performerNames, String venueAddress,
+      int venueCapacity, boolean venueIsOutdoors, boolean venueAllowsSmoking, int numTicketsTotal,
+      int numTicketsSold, double ticketPrice, boolean isSponsored, double sponsoredAmount,
+      PerformanceStatus status, Event event) {
+    super(performanceID, startDateTime, endDateTime, performerNames, venueAddress, venueCapacity,
+        venueIsOutdoors, venueAllowsSmoking, numTicketsTotal, numTicketsSold, ticketPrice,
+        isSponsored, sponsoredAmount, status, event);
+  }
 }

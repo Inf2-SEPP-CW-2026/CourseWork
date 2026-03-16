@@ -1,34 +1,24 @@
 package model;
 
 /**
- * Base type for application users.
+ * Abstract user from the UML diagram.
  */
 public abstract class User {
-    private final String userId;
-    private final String displayName;
-    private final String email;
-    private final String passwordHash;
+  private String email;
+  private String password;
 
-    protected User(String userId, String displayName, String email, String passwordHash) {
-        this.userId = userId;
-        this.displayName = displayName;
-        this.email = email;
-        this.passwordHash = passwordHash;
-    }
+  protected User() {}
 
-    public String getUserId() {
-        return userId;
-    }
+  protected User(String email, String password) {
+    this.email = email;
+    this.password = password;
+  }
 
-    public String getDisplayName() {
-        return displayName;
-    }
+  public String getEmail() {
+    return email;
+  }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPasswordHash() {
-        return passwordHash;
-    }
+  public String getPassword() {
+    return password;
+  }
 }
