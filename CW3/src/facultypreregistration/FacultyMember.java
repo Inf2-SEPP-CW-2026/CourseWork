@@ -3,7 +3,7 @@ package facultypreregistration;
 import model.User;
 
 /**
- * Faculty-member user for the even-group preregistration feature.
+ * Faculty-member user for preregistration.
  */
 public class FacultyMember extends User {
   private int loginAttempts;
@@ -17,7 +17,12 @@ public class FacultyMember extends User {
     this.loginAttempts = loginAttempts;
   }
 
-  public int getLoginAttempts() {
+  /* Thread Safe */
+  public synchronized int getLoginAttempts() {
     return loginAttempts;
+  }
+
+  public synchronized void recordLoginAttempt() {
+    loginAttempts++;
   }
 }

@@ -1,7 +1,7 @@
 package model;
 
 /**
- * Abstract user from the UML diagram.
+ * Abstract User
  */
 public abstract class User {
   private String email;
