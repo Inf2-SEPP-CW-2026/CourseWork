@@ -3,6 +3,8 @@ minimum_pre_commit_version: "3.7.0"
 ci:
   autofix_prs: true
   autoupdate_schedule: quarterly
+  skip:
+    - java-redhat-format
 
 repos:
   - repo: local
