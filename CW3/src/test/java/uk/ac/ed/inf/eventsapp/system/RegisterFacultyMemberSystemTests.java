@@ -1,4 +1,4 @@
-package uk.ac.ed.inf.eventsapp.facultypreregistration;
+package uk.ac.ed.inf.eventsapp.system;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -9,6 +9,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import uk.ac.ed.inf.eventsapp.facultypreregistration.FacultyMember;
+import uk.ac.ed.inf.eventsapp.facultypreregistration.RegistrationUtility;
 
 /**
  * System tests for the even-group lazy faculty registration feature.

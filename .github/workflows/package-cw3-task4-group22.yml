@@ -1,0 +1,43 @@
+name: Package CW3 Task 4 Group 22
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "CW3/pom.xml"
+      - "CW3/src/assembly/task4-code-review.xml"
+      - "CW3/src/main/java/uk/ac/ed/inf/eventsapp/facultypreregistration/**"
+      - "CW3/src/main/java/uk/ac/ed/inf/eventsapp/model/User.java"
+      - "CW3/src/test/java/uk/ac/ed/inf/eventsapp/system/RegisterFacultyMemberSystemTests.java"
+      - "CW3/src/test/java/uk/ac/ed/inf/eventsapp/unit/TestFacultyMember.java"
+      - "CW3/src/test/java/uk/ac/ed/inf/eventsapp/unit/TestRegistrationUtility.java"
+      - ".github/workflows/package-cw3-task4-group22.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  package-task4:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Build CW3 Task 4 ZIP
+        working-directory: CW3
+        run: mvn -q -Ptask4-code-review-zip package
+
+      - name: Upload CW3 Task 4 ZIP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CW3SECodeReviewImplementationGroup22
+          path: CW3/target/CW3SECodeReviewImplementationGroup22.zip
+          if-no-files-found: error
