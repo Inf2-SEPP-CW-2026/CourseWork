@@ -1,0 +1,49 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.1"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.1
+          https://maven.apache.org/xsd/assembly-2.1.1.xsd">
+    <id>task4-code-review</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+
+    <fileSets>
+        <fileSet>
+            <directory>${project.basedir}</directory>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>pom.xml</include>
+            </includes>
+        </fileSet>
+
+        <fileSet>
+            <directory>${project.basedir}/src/main/java</directory>
+            <outputDirectory>/src/main/java</outputDirectory>
+            <includes>
+                <include>uk/ac/ed/inf/eventsapp/facultypreregistration/**</include>
+                <include>uk/ac/ed/inf/eventsapp/model/User.java</include>
+            </includes>
+            <excludes>
+                <exclude>**/.DS_Store</exclude>
+                <exclude>**/__MACOSX/**</exclude>
+                <exclude>**/._*</exclude>
+            </excludes>
+        </fileSet>
+
+        <fileSet>
+            <directory>${project.basedir}/src/test/java</directory>
+            <outputDirectory>/src/test/java</outputDirectory>
+            <includes>
+                <include>uk/ac/ed/inf/eventsapp/system/RegisterFacultyMemberSystemTests.java</include>
+                <include>uk/ac/ed/inf/eventsapp/unit/TestFacultyMember.java</include>
+                <include>uk/ac/ed/inf/eventsapp/unit/TestRegistrationUtility.java</include>
+            </includes>
+            <excludes>
+                <exclude>**/.DS_Store</exclude>
+                <exclude>**/__MACOSX/**</exclude>
+                <exclude>**/._*</exclude>
+            </excludes>
+        </fileSet>
+    </fileSets>
+</assembly>
