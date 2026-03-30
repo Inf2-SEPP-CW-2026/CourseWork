@@ -1,0 +1,18 @@
+minimum_pre_commit_version: "3.7.0"
+
+ci:
+  autofix_prs: true
+  autoupdate_schedule: quarterly
+  skip:
+    - java-redhat-format
+
+repos:
+  - repo: local
+    hooks:
+      - id: java-redhat-format
+        name: Java format (Red Hat / Eclipse)
+        entry: bash ./scripts/run-java-format-hook.sh
+        language: system
+        pass_filenames: false
+        files: ^CW3/(src|tests)/.*\.java$
+        require_serial: true

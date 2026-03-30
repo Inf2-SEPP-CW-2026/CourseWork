@@ -76,6 +76,33 @@
         }
       },
       "group": "test"
+    },
+    {
+      "label": "CW3: Package Task 4 Group 22 Zip",
+      "type": "shell",
+      "command": "mvn",
+      "args": [
+        "-q",
+        "-Ptask4-code-review-zip",
+        "package"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/CW3",
+        "shell": {
+          "executable": "/bin/zsh",
+          "args": [
+            "-lic"
+          ]
+        }
+      },
+      "group": "build",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      },
+      "detail": "Builds CW3SECodeReviewImplementationGroup22.zip for CW3 Task 4."
     }
   ]
 }
