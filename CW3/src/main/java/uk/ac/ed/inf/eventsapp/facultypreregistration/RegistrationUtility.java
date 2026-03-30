@@ -12,9 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * Lazy registration utility for faculty preregistration.
- */
+/** Handles lazy faculty preregistration from a configured file. */
 public class RegistrationUtility {
   private static final String EMAIL_PATTERN = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
   private final String filePath;
@@ -23,6 +21,12 @@ public class RegistrationUtility {
   private FileTime cachedLastModifiedTime;
   private long cachedFileSize;
 
+  /**
+   * Creates a registration utility backed by the supplied faculty preregistration file.
+   *
+   * @param filePath path to the UTF-8 encoded faculty preregistration file
+   * @throws IllegalArgumentException if {@code filePath} is {@code null} or blank
+   */
   public RegistrationUtility(String filePath) throws IllegalArgumentException {
     if (filePath == null || filePath.isBlank()) {
       throw new IllegalArgumentException("filePath must not be blank.");
@@ -36,7 +40,12 @@ public class RegistrationUtility {
   }
 
   /**
-   * Lazily creates a faculty account when a matching email appears in the configured file
+   * Creates a faculty account on first use when the email appears in the file.
+   *
+   * @param email faculty email supplied during login
+   * @return the matching faculty member, or {@code null} if the email is not in the file
+   * @throws IllegalArgumentException if {@code email} is {@code null} or blank
+   * @throws IllegalStateException if the preregistration file cannot be read
    */
   public synchronized FacultyMember registerFacultyMember(String email)
       throws IllegalArgumentException {
@@ -62,7 +71,14 @@ public class RegistrationUtility {
   }
 
   /**
-   * Attempts a faculty login by lazily creating the account on the first matching login attempt.
+   * Attempts a faculty login using lazy preregistration.
+   *
+   * @param email faculty email supplied during login
+   * @param password candidate password supplied during login
+   * @return the authenticated faculty member, or {@code null} if authentication fails
+   * @throws IllegalArgumentException if {@code password} is {@code null} or blank, or if
+   *         preregistration triggers validation of a {@code null} or blank email
+   * @throws IllegalStateException if the preregistration file cannot be read
    */
   public synchronized FacultyMember loginFacultyMember(String email, String password) {
     if (password == null || password.isBlank()) {
@@ -82,6 +98,7 @@ public class RegistrationUtility {
     return facultyMember;
   }
 
+  /** @return an immutable snapshot of registered faculty members */
   public synchronized Collection<FacultyMember> getRegisteredFacultyMembers() {
     return Collections.unmodifiableList(List.copyOf(registeredFacultyMembers.values()));
   }

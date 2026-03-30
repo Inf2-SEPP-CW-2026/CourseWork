@@ -24,8 +24,8 @@ public class EventPerformanceController extends Controller {
     throw new UnsupportedOperationException("createEvent is not implemented yet.");
   }
 
-  public void searchForPerformances() {
-    throw new UnsupportedOperationException("searchForPerformances is not implemented yet.");
+  public void searchforPerformances() {
+    throw new UnsupportedOperationException("searchforPerformances is not implemented yet.");
   }
 
   public void viewPerformance() {

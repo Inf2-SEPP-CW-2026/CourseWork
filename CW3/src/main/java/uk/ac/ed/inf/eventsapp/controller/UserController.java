@@ -52,8 +52,8 @@ public class UserController extends Controller {
     users.add(user);
   }
 
-  private void addPreRegisteredUsers() {
-    throw new UnsupportedOperationException("addPreRegisteredUsers is not implemented yet.");
+  private void addPreregisteredUsers() {
+    throw new UnsupportedOperationException("addPreregisteredUsers is not implemented yet.");
   }
 
   private EntertainmentProvider getEntertainmentProviderOwningEvent(long eventNumber) {
