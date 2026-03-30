@@ -24,6 +24,6 @@ public class SearchPerformancesSystemTests {
   @Test
   @Disabled("TODO: implement performance-search system tests.")
   void studentCanSearchForPerformances() {
-    eventPerformanceController.searchForPerformances();
+    eventPerformanceController.searchforPerformances();
   }
 }
