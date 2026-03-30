@@ -42,9 +42,6 @@
     </dependencies>
 
     <build>
-        <sourceDirectory>${project.basedir}/src</sourceDirectory>
-        <testSourceDirectory>${project.basedir}/tests</testSourceDirectory>
-
         <plugins>
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
@@ -53,8 +50,8 @@
                 <configuration>
                     <java>
                         <includes>
-                            <include>src/**/*.java</include>
-                            <include>tests/**/*.java</include>
+                            <include>src/main/java/**/*.java</include>
+                            <include>src/test/java/**/*.java</include>
                         </includes>
                         <eclipse>
                             <file>${spotless.formatter.file}</file>
