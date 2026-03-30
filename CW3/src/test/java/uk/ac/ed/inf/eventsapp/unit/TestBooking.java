@@ -8,8 +8,7 @@ import uk.ac.ed.inf.eventsapp.model.BookingStatus;
 import uk.ac.ed.inf.eventsapp.model.Event;
 import uk.ac.ed.inf.eventsapp.model.EventType;
 import uk.ac.ed.inf.eventsapp.model.EntertainmentProvider;
-import uk.ac.ed.inf.eventsapp.model.EventPerformance;
-import uk.ac.ed.inf.eventsapp.model.Student;
+import uk.ac.ed.inf.eventsapp.model.Performance;
 import uk.ac.ed.inf.eventsapp.model.Student;
 import uk.ac.ed.inf.eventsapp.model.StudentPreferences;
 import org.junit.jupiter.api.Disabled;
@@ -27,7 +26,7 @@ public class TestBooking {
     EntertainmentProvider provider = new EntertainmentProvider("provider@example.com", "secret",
         "Org", "1234567890", "Provider Name", "Description");
     Event event = new Event(1L, "Live Music", EventType.MUSIC, true, provider);
-    EventPerformance performance = new EventPerformance(1L, LocalDateTime.of(2026, 4, 1, 19, 0),
+    Performance performance = new Performance(1L, LocalDateTime.of(2026, 4, 1, 19, 0),
         LocalDateTime.of(2026, 4, 1, 21, 0), java.util.List.of("Band"), "Main Hall", 120, false,
         false, 120, 0, 15.0, false, 0.0, uk.ac.ed.inf.eventsapp.model.PerformanceStatus.ACTIVE,
         event);

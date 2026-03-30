@@ -30,8 +30,9 @@ public class MenuController extends Controller {
     throw new UnsupportedOperationException("handleStudentMainMenu is not implemented yet.");
   }
 
-  private boolean handleTeachingStaffMainMenu() {
-    throw new UnsupportedOperationException("handleTeachingStaffMainMenu is not implemented yet.");
+  private boolean handleEntertainmentProviderMainMenu() {
+    throw new UnsupportedOperationException(
+        "handleEntertainmentProviderMainMenu is not implemented yet.");
   }
 
   private boolean handleAdminStaffMainMenu() {
