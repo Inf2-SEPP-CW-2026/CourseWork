@@ -35,9 +35,15 @@ jobs:
         working-directory: CW3
         run: mvn -q -Ptask4-code-review-zip package
 
-      - name: Upload CW3 Task 4 ZIP artifact
+      - name: Expand CW3 Task 4 ZIP for artifact upload
+        run: |
+          rm -rf /tmp/cw3-task4-group22
+          mkdir -p /tmp/cw3-task4-group22
+          unzip -q CW3/target/CW3SECodeReviewImplementationGroup22.zip -d /tmp/cw3-task4-group22
+
+      - name: Upload CW3 Task 4 artifact
         uses: actions/upload-artifact@v4
         with:
           name: CW3SECodeReviewImplementationGroup22
-          path: CW3/target/CW3SECodeReviewImplementationGroup22.zip
+          path: /tmp/cw3-task4-group22
           if-no-files-found: error
