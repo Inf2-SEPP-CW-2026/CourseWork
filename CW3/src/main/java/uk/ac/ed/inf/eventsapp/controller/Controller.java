@@ -26,19 +26,19 @@ public abstract class Controller {
     this.currentUser = currentUser;
   }
 
-  private boolean checkCurrentUserIsGuest() {
+  protected boolean checkCurrentUserIsGuest() {
     return currentUser == null;
   }
 
-  private boolean checkCurrentUserIsAdmin() {
+  protected boolean checkCurrentUserIsAdmin() {
     return currentUser instanceof AdminStaff;
   }
 
-  private boolean checkCurrentUserIsStudent() {
+  protected boolean checkCurrentUserIsStudent() {
     return currentUser instanceof Student;
   }
 
-  private boolean checkCurrentUserIsEntertainmentProvider() {
+  protected boolean checkCurrentUserIsEntertainmentProvider() {
     return currentUser instanceof EntertainmentProvider;
   }
 
