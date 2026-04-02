@@ -14,7 +14,7 @@ public class Booking {
   private Student student;
   private Performance performance;
 
-  public Booking() {}
+  public Booking() {};
 
   public Booking(long bookingNumber, int numTickets, double amountPaid,
       LocalDateTime bookingDateTime, BookingStatus status, Student student,
@@ -33,7 +33,7 @@ public class Booking {
   }
 
   public void cancelPaymentFailed() {
-    throw new UnsupportedOperationException("cancelPaymentFailed is not implemented yet.");
+    status = BookingStatus.PAYMENTFAILED;
   }
 
   public void cancelByProvider() {
@@ -49,7 +49,11 @@ public class Booking {
   }
 
   public String generateBookingRecord() {
-    throw new UnsupportedOperationException("generateBookingRecord is not implemented yet.");
+    return "Booking #" + bookingNumber + "\nStudent: " + student.getName() + "\nEmail: "
+        + student.getEmail() + "\nPhone: " + student.getPhoneNumber() + "\nEvent: "
+        + performance.getEventTitle() + "\nPerformance: " + performance.toString() + "\nTickets: "
+        + numTickets + "\nAmount paid: £" + amountPaid;
   }
+
 
 }

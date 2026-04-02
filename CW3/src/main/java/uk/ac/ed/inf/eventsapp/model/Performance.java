@@ -53,15 +53,15 @@ public class Performance {
   }
 
   public boolean checkIfEventIsTicketed() {
-    throw new UnsupportedOperationException("checkIfEventIsTicketed is not implemented yet.");
+    return event != null && event.isTicketed();
   }
 
   public boolean checkIfTicketsLeft(int numTicketsToBuy) {
-    throw new UnsupportedOperationException("checkIfTicketsLeft is not implemented yet.");
+    return numTicketsTotal - numTicketsSold >= numTicketsToBuy;
   }
 
   public double getFinalTicketPrice() {
-    throw new UnsupportedOperationException("getFinalTicketPrice is not implemented yet.");
+    return ticketPrice;
   }
 
   public String getOrganiserEmail() {
@@ -92,6 +92,10 @@ public class Performance {
     bookings.add(booking);
   }
 
+  public void addNumTicketsSold(int numTickets) {
+    numTicketsSold += numTickets;
+  }
+
   boolean hasID(long candidatePerformanceID) {
     return performanceID == candidatePerformanceID;
   }
@@ -104,6 +108,8 @@ public class Performance {
 
   @Override
   public String toString() {
-    throw new UnsupportedOperationException("toString is not implemented yet.");
+    return "Performance #" + performanceID + " | Event: " + getEventTitle() + " | " + startDateTime
+        + " to " + endDateTime + " | Venue: " + venueAddress + " | Price: £" + ticketPrice
+        + " | Tickets remaining: " + (numTicketsTotal - numTicketsSold);
   }
 }

@@ -89,6 +89,10 @@ public class Event {
     return organiser == null ? null : organiser.getEmail();
   }
 
+  public boolean isTicketed() {
+    return isTicketed;
+  }
+
   private boolean hasPerformanceAtSameTimes(LocalDateTime startDateTime,
       LocalDateTime endDateTime) {
     for (Performance performance : performances) {
