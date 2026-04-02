@@ -1,5 +1,6 @@
 package uk.ac.ed.inf.eventsapp.controller;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -12,6 +13,8 @@ import uk.ac.ed.inf.eventsapp.model.EntertainmentProvider;
 import uk.ac.ed.inf.eventsapp.model.Event;
 import uk.ac.ed.inf.eventsapp.model.EventType;
 import uk.ac.ed.inf.eventsapp.model.Performance;
+import uk.ac.ed.inf.eventsapp.model.Student;
+import uk.ac.ed.inf.eventsapp.model.StudentPreferences;
 import uk.ac.ed.inf.eventsapp.view.View;
 
 /**
@@ -20,6 +23,7 @@ import uk.ac.ed.inf.eventsapp.view.View;
 public class EventPerformanceController extends Controller {
   private static final DateTimeFormatter DATE_TIME_FORMATTER =
       DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+  private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
   private static final Pattern MONEY_PATTERN = Pattern.compile("^(?:0|[1-9]\\d*)(?:\\.\\d{1,2})?$");
   // non-negative number with at most two decimal places
 
@@ -71,10 +75,12 @@ public class EventPerformanceController extends Controller {
     long nextPerformanceId = getNextPerformanceID();
 
     for (int performanceIndex = 1; performanceIndex <= performanceCount; performanceIndex++) {
-      LocalDateTime startDateTime = parseDateTime(
-          view.getInput("Performance " + performanceIndex + " start (yyyy-MM-dd HH:mm)"));
-      LocalDateTime endDateTime = parseDateTime(
-          view.getInput("Performance " + performanceIndex + " end (yyyy-MM-dd HH:mm)"));
+      LocalDateTime startDateTime =
+          parseTime(view.getInput("Performance " + performanceIndex + " start (yyyy-MM-dd HH:mm)"),
+              DATE_TIME_FORMATTER);
+      LocalDateTime endDateTime =
+          parseTime(view.getInput("Performance " + performanceIndex + " end (yyyy-MM-dd HH:mm)"),
+              DATE_TIME_FORMATTER);
       if (startDateTime == null || endDateTime == null || !endDateTime.isAfter(startDateTime)) {
         view.displayError("Performance dates/times are invalid.");
         return null;
@@ -152,7 +158,44 @@ public class EventPerformanceController extends Controller {
   }
 
   public void searchforPerformances() {
-    throw new UnsupportedOperationException("searchforPerformances is not implemented yet.");
+    if (checkCurrentUserIsGuest()) {
+      view.displayError("Only logged-in users can search for performances.");
+      return;
+    }
+
+    LocalDate performanceDate = parseDate(view.getInput("Enter search date (yyyy-MM-dd)"));
+    if (performanceDate == null) {
+      view.displayError("Date format is invalid. Use yyyy-MM-dd.");
+      return;
+    }
+
+    Collection<String> prioritisedPerformanceInfo = new ArrayList<>();
+    Collection<String> otherPerformanceInfo = new ArrayList<>();
+    StudentPreferences preferences = getStudentPreferences();
+    boolean shouldPrioritisePreferences = hasSpecifiedPreferences(preferences);
+
+    for (Event event : getEvents()) {
+      Collection<String> performanceInfo =
+          event.getInfoOfPerformancesOnDate(performanceDate.atStartOfDay());
+      if (performanceInfo.isEmpty()) {
+        continue;
+      }
+
+      if (shouldPrioritisePreferences && event.matchesPreferences(preferences)) {
+        prioritisedPerformanceInfo.addAll(performanceInfo);
+      } else {
+        otherPerformanceInfo.addAll(performanceInfo);
+      }
+    }
+
+    if (prioritisedPerformanceInfo.isEmpty() && otherPerformanceInfo.isEmpty()) {
+      view.displayError("There are no performances on that date.");
+      return;
+    }
+
+    Collection<String> orderedPerformanceInfo = new ArrayList<>(prioritisedPerformanceInfo);
+    orderedPerformanceInfo.addAll(otherPerformanceInfo);
+    view.displayListOfPerformances(orderedPerformanceInfo);
   }
 
   public void viewPerformance() {
@@ -266,13 +309,25 @@ public class EventPerformanceController extends Controller {
     }
   }
 
-  private LocalDateTime parseDateTime(String rawDateTime) {
+  private LocalDateTime parseTime(String rawDateTime, DateTimeFormatter formatter) {
     if (rawDateTime == null) {
       return null;
     }
 
     try {
-      return LocalDateTime.parse(rawDateTime.trim(), DATE_TIME_FORMATTER);
+      return LocalDateTime.parse(rawDateTime.trim(), formatter);
+    } catch (DateTimeParseException exception) {
+      return null;
+    }
+  }
+
+  private LocalDate parseDate(String rawDate) {
+    if (rawDate == null) {
+      return null;
+    }
+
+    try {
+      return LocalDate.parse(rawDate.trim(), DATE_FORMATTER);
     } catch (DateTimeParseException exception) {
       return null;
     }
@@ -302,5 +357,19 @@ public class EventPerformanceController extends Controller {
       }
     }
     return false;
+  }
+
+  private StudentPreferences getStudentPreferences() {
+    if (!checkCurrentUserIsStudent()) {
+      return null;
+    }
+
+    return ((Student) currentUser).getPreferences();
+  }
+
+  private boolean hasSpecifiedPreferences(StudentPreferences preferences) {
+    return preferences != null && (preferences.isPreferMusicEvents()
+        || preferences.isPreferTheaterEvents() || preferences.isPreferDanceEvents()
+        || preferences.isPreferMovieEvents() || preferences.isPreferSportsEvents());
   }
 }

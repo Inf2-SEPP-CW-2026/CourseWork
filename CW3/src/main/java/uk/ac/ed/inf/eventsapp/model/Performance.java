@@ -1,6 +1,7 @@
 package uk.ac.ed.inf.eventsapp.model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -8,6 +9,9 @@ import java.util.Collection;
  * Performance entity from the UML diagram.
  */
 public class Performance {
+  private static final DateTimeFormatter SEARCH_RESULT_TIME_FORMATTER =
+      DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
   private long performanceID;
   private LocalDateTime startDateTime;
   private LocalDateTime endDateTime;
@@ -72,6 +76,10 @@ public class Performance {
     return event == null ? null : event.titleValue();
   }
 
+  public LocalDateTime getStartDateTime() {
+    return startDateTime;
+  }
+
   public boolean checkHasNotHappenedYet() {
     throw new UnsupportedOperationException("checkHasNotHappenedYet is not implemented yet.");
   }
@@ -92,6 +100,10 @@ public class Performance {
     bookings.add(booking);
   }
 
+  boolean isActive() {
+    return status == PerformanceStatus.ACTIVE;
+  }
+
   boolean hasID(long candidatePerformanceID) {
     return performanceID == candidatePerformanceID;
   }
@@ -104,6 +116,18 @@ public class Performance {
 
   @Override
   public String toString() {
-    throw new UnsupportedOperationException("toString is not implemented yet.");
+    String eventTitle = getEventTitle() == null ? "Unknown event" : getEventTitle();
+    String startTime =
+        startDateTime == null ? "Unknown time" : startDateTime.format(SEARCH_RESULT_TIME_FORMATTER);
+    String endTime =
+        endDateTime == null ? "Unknown time" : endDateTime.format(SEARCH_RESULT_TIME_FORMATTER);
+    String venue = venueAddress == null || venueAddress.isBlank() ? "Unknown venue" : venueAddress;
+    String organiser = event == null || event.organiserDisplayName() == null ? "Unknown provider"
+        : event.organiserDisplayName();
+    double eventReviewAverage = event == null ? 0.0 : event.getAverageReviewRating();
+
+    return String.format(
+        "Performance ID: %d | Event: %s | Time: %s to %s | Venue: %s | Provider: %s | Event review average: %.1f",
+        performanceID, eventTitle, startTime, endTime, venue, organiser, eventReviewAverage);
   }
 }
