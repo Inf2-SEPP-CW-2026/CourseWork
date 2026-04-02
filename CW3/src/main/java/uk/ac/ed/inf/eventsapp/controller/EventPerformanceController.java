@@ -217,10 +217,17 @@ public class EventPerformanceController extends Controller {
   }
 
   private Boolean parseBoolean(String rawBoolean) {
-    if(rawBoolean==null){return null;}
+    if (rawBoolean == null) {
+      return null;
+    }
 
-    String normalised=rawBoolean.trim().toLowerCase();return switch(normalised){case"y","yes","true","ticketed","outdoors","smoking"->Boolean.TRUE;case"n","no","false","non-ticketed","indoors","non-smoking"->Boolean.FALSE;default->null;};
-    // robustness to common variationst
+    String normalised = rawBoolean.trim().toLowerCase();
+    return switch (normalised) {
+      case "y", "yes", "true", "ticketed", "outdoors", "smoking" -> Boolean.TRUE;
+      case "n", "no", "false", "non-ticketed", "indoors", "non-smoking" -> Boolean.FALSE;
+      default -> null;
+    };
+    // robustness to common variations
   }
 
   private Integer parsePositiveInteger(String rawInteger) {
