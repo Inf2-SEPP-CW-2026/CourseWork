@@ -102,6 +102,8 @@ public class Performance {
 
   public void addNumTicketsSold(int numTickets) {
     numTicketsSold += numTickets;
+  }
+
   boolean isActive() {
     return status == PerformanceStatus.ACTIVE;
   }
