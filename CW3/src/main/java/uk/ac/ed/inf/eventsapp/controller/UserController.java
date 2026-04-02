@@ -7,6 +7,7 @@ import uk.ac.ed.inf.eventsapp.model.EntertainmentProvider;
 import uk.ac.ed.inf.eventsapp.model.Event;
 import uk.ac.ed.inf.eventsapp.model.User;
 import uk.ac.ed.inf.eventsapp.view.View;
+import uk.ac.ed.inf.eventsapp.model.Student;
 
 /**
  * Handles login, logout, and provider registration.
@@ -45,7 +46,21 @@ public class UserController extends Controller {
   }
 
   public void editPreferences() {
-    throw new UnsupportedOperationException("editPreferences is not implemented yet.");
+    if (!checkCurrentUserIsStudent()) {
+      view.displayError("Only students can edit preferences.");
+      return;
+    }
+    Student student = (Student) getCurrentUser();
+    boolean updated = false;
+    while (!updated) {
+      String input = view.getInput(
+          "Enter preferences (5 digits, 1=yes, 0=no, order: Music Theater Dance Movie Sport): ");
+      updated = student.getPreferences().updatePreferences(input);
+      if (!updated) {
+        view.displayError("Invalid input. Enter exactly 5 characters using only 0 and 1.");
+      }
+    }
+    view.displaySuccess("Preferences updated successfully.");
   }
 
   private void addUser(User user) {
