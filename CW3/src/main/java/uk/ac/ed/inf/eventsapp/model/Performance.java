@@ -92,6 +92,16 @@ public class Performance {
     bookings.add(booking);
   }
 
+  boolean hasID(long candidatePerformanceID) {
+    return performanceID == candidatePerformanceID;
+  }
+
+  boolean hasSameSchedule(LocalDateTime candidateStartDateTime,
+      LocalDateTime candidateEndDateTime) {
+    return startDateTime != null && endDateTime != null
+        && startDateTime.equals(candidateStartDateTime) && endDateTime.equals(candidateEndDateTime);
+  }
+
   @Override
   public String toString() {
     throw new UnsupportedOperationException("toString is not implemented yet.");
