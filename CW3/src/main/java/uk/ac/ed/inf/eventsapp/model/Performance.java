@@ -114,8 +114,7 @@ public class Performance {
         && startDateTime.equals(candidateStartDateTime) && endDateTime.equals(candidateEndDateTime);
   }
 
-  @Override
-  public String toString() {
+  private String toSummaryString() {
     String eventTitle = getEventTitle() == null ? "Unknown event" : getEventTitle();
     String startTime =
         startDateTime == null ? "Unknown time" : startDateTime.format(SEARCH_RESULT_TIME_FORMATTER);
@@ -129,5 +128,40 @@ public class Performance {
     return String.format(
         "Performance ID: %d | Event: %s | Time: %s to %s | Venue: %s | Provider: %s | Event review average: %.1f",
         performanceID, eventTitle, startTime, endTime, venue, organiser, eventReviewAverage);
+  }
+
+  private String toDetailedString() {
+    String eventTitle = getEventTitle() == null ? "Unknown event" : getEventTitle();
+    String startTime =
+        startDateTime == null ? "Unknown time" : startDateTime.format(SEARCH_RESULT_TIME_FORMATTER);
+    String endTime =
+        endDateTime == null ? "Unknown time" : endDateTime.format(SEARCH_RESULT_TIME_FORMATTER);
+    String venue = venueAddress == null || venueAddress.isBlank() ? "Unknown venue" : venueAddress;
+    String organiser = event == null || event.organiserDisplayName() == null ? "Unknown provider"
+        : event.organiserDisplayName();
+    String performerList = performerNames == null || performerNames.isEmpty() ? "Unknown performers"
+        : String.join(", ", performerNames);
+    String venueEnvironment = venueIsOutdoors ? "Outdoors" : "Indoors";
+    String smokingPolicy = venueAllowsSmoking ? "Smoking allowed" : "Non-smoking";
+    String ticketing = numTicketsTotal > 0 || ticketPrice > 0.0 ? "Ticketed" : "Non-ticketed";
+    int ticketsRemaining = Math.max(numTicketsTotal - numTicketsSold, 0);
+    String ticketInfo = "Ticketed".equals(ticketing)
+        ? String.format("Price: %.2f | Tickets remaining: %d", ticketPrice, ticketsRemaining)
+        : "No tickets required";
+    String statusLabel = status == null ? "Unknown" : status.name();
+
+    return String.format(
+        "Performance ID: %d%nEvent: %s%nTime: %s to %s%nVenue: %s%nVenue details: capacity %d, %s, %s%nPerformers: %s%nProvider: %s%nTicketing: %s%nTicket details: %s%nStatus: %s",
+        performanceID, eventTitle, startTime, endTime, venue, venueCapacity, venueEnvironment,
+        smokingPolicy, performerList, organiser, ticketing, ticketInfo, statusLabel);
+  }
+
+  @Override
+  public String toString() {
+    return toString(false);
+  }
+
+  public String toString(boolean detailed) {
+    return detailed ? toDetailedString() : toSummaryString();
   }
 }

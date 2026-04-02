@@ -199,7 +199,24 @@ public class EventPerformanceController extends Controller {
   }
 
   public void viewPerformance() {
-    throw new UnsupportedOperationException("viewPerformance is not implemented yet.");
+    if (checkCurrentUserIsGuest()) {
+      view.displayError("Only logged-in users can view performances.");
+      return;
+    }
+
+    Long performanceID = parsePositiveLong(view.getInput("Performance ID"));
+    if (performanceID == null) {
+      view.displayError("Performance ID must be a valid positive whole number.");
+      return;
+    }
+
+    Performance performance = getPerformanceByID(performanceID);
+    if (performance == null) {
+      view.displayError("Performance not found.");
+      return;
+    }
+
+    view.displaySpecificPerformance(performance.toString(true));
   }
 
   public void cancelPerformance() {
@@ -223,7 +240,13 @@ public class EventPerformanceController extends Controller {
   }
 
   private Performance getPerformanceByID(long performanceID) {
-    throw new UnsupportedOperationException("getPerformanceByID is not implemented yet.");
+    for (Event event : getEvents()) {
+      Performance performance = event.getPerformanceByID(performanceID);
+      if (performance != null) {
+        return performance;
+      }
+    }
+    return null;
   }
 
   private long getNextEventID() {
@@ -276,6 +299,19 @@ public class EventPerformanceController extends Controller {
   private Integer parsePositiveInteger(String rawInteger) {
     Integer parsed = parseNonNegativeInteger(rawInteger);
     return parsed != null && parsed > 0 ? parsed : null;
+  }
+
+  private Long parsePositiveLong(String rawLong) {
+    if (rawLong == null) {
+      return null;
+    }
+
+    try {
+      long parsed = Long.parseLong(rawLong.trim());
+      return parsed > 0 ? parsed : null;
+    } catch (NumberFormatException exception) {
+      return null;
+    }
   }
 
   private Integer parseNonNegativeInteger(String rawInteger) {
