@@ -16,7 +16,7 @@ public class Event {
   private final Collection<Performance> performances;
 
   public Event() {
-    this.performances = new ArrayList<>();
+    this.performances = new ArrayList<Performance>();
   }
 
   public Event(long eventID, String title, EventType type, boolean isTicketed,
@@ -26,7 +26,7 @@ public class Event {
     this.type = type;
     this.isTicketed = isTicketed;
     this.organiser = organiser;
-    this.performances = new ArrayList<>();
+    this.performances = new ArrayList<Performance>();
   }
 
   public Performance createPerformance(long performanceID, LocalDateTime startDateTime,
@@ -50,15 +50,6 @@ public class Event {
 
   public String getOrganiserEmail() {
     return organiser == null ? null : organiser.getEmail();
-  }
-
-  public double getAverageRatingOfPerformances() {
-    throw new UnsupportedOperationException(
-        "getAverageRatingOfPerformances is not implemented yet.");
-  }
-
-  public Collection<String> getAllPerformanceReviews() {
-    throw new UnsupportedOperationException("getAllPerformanceReviews is not implemented yet.");
   }
 
   private boolean hasPerformanceAtSameTimes(LocalDateTime startDateTime,

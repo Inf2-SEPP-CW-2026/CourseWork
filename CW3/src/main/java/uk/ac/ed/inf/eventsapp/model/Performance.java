@@ -3,7 +3,6 @@ package uk.ac.ed.inf.eventsapp.model;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * Performance entity from the UML diagram.
@@ -20,26 +19,19 @@ public class Performance {
   private int numTicketsTotal;
   private int numTicketsSold;
   private double ticketPrice;
-  private boolean isSponsored;
-  private double sponsoredAmount;
-  private Collection<Integer> reviewRatings;
-  private Collection<String> reviewComments;
   private PerformanceStatus status;
   private Event event;
   private final Collection<Booking> bookings;
 
   public Performance() {
     this.performerNames = new ArrayList<>();
-    this.reviewRatings = new ArrayList<>();
-    this.reviewComments = new ArrayList<>();
     this.bookings = new ArrayList<>();
   }
 
   public Performance(long performanceID, LocalDateTime startDateTime, LocalDateTime endDateTime,
       Collection<String> performerNames, String venueAddress, int venueCapacity,
       boolean venueIsOutdoors, boolean venueAllowsSmoking, int numTicketsTotal, int numTicketsSold,
-      double ticketPrice, boolean isSponsored, double sponsoredAmount, PerformanceStatus status,
-      Event event) {
+      double ticketPrice, PerformanceStatus status, Event event) {
     this.performanceID = performanceID;
     this.startDateTime = startDateTime;
     this.endDateTime = endDateTime;
@@ -51,10 +43,6 @@ public class Performance {
     this.numTicketsTotal = numTicketsTotal;
     this.numTicketsSold = numTicketsSold;
     this.ticketPrice = ticketPrice;
-    this.isSponsored = isSponsored;
-    this.sponsoredAmount = sponsoredAmount;
-    this.reviewRatings = new ArrayList<>();
-    this.reviewComments = new ArrayList<>();
     this.status = status;
     this.event = event;
     this.bookings = new ArrayList<>();
@@ -98,14 +86,6 @@ public class Performance {
 
   public String getBookingDetailsForRefund() {
     throw new UnsupportedOperationException("getBookingDetailsForRefund is not implemented yet.");
-  }
-
-  public void sponsor(double amount) {
-    throw new UnsupportedOperationException("sponsor is not implemented yet.");
-  }
-
-  public void review(int rating, String comment) {
-    throw new UnsupportedOperationException("review is not implemented yet.");
   }
 
   public void addBooking(Booking booking) {

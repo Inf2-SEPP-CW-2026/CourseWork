@@ -1,6 +1,7 @@
 package uk.ac.ed.inf.eventsapp.controller;
 
 import java.util.Collection;
+
 import uk.ac.ed.inf.eventsapp.model.Event;
 import uk.ac.ed.inf.eventsapp.model.Performance;
 import uk.ac.ed.inf.eventsapp.view.View;
@@ -34,14 +35,6 @@ public class EventPerformanceController extends Controller {
 
   public void cancelPerformance() {
     throw new UnsupportedOperationException("cancelPerformance is not implemented yet.");
-  }
-
-  private boolean checkIfSponsorshipPossible(Performance performance, int amount) {
-    throw new UnsupportedOperationException("checkIfSponsorshipPossible is not implemented yet.");
-  }
-
-  public void sponsorPerformance() {
-    throw new UnsupportedOperationException("sponsorPerformance is not implemented yet.");
   }
 
   private void addEvent(Event event) {
