@@ -1,38 +1,44 @@
 package uk.ac.ed.inf.eventsapp.view;
 
 import java.util.Collection;
+import java.util.Scanner;
 
 /**
- * Text-based UI placeholder.
+ * Text-based CLI placeholder.
  */
 public class TextUserInterface implements View {
+  private static final Scanner INPUT_SCANNER = new Scanner(System.in);
+
   @Override
   public String getInput(String inputPrompt) {
-    throw new UnsupportedOperationException("getInput is not implemented yet.");
+    System.out.print(inputPrompt + ": ");
+    return INPUT_SCANNER.hasNextLine() ? INPUT_SCANNER.nextLine() : "";
   }
 
   @Override
   public void displaySuccess(String successMessage) {
-    throw new UnsupportedOperationException("displaySuccess is not implemented yet.");
+    System.out.println("SUCCESS: " + successMessage);
   }
 
   @Override
   public void displayError(String errorMessage) {
-    throw new UnsupportedOperationException("displayError is not implemented yet.");
+    System.out.println("ERROR: " + errorMessage);
   }
 
   @Override
   public void displayListOfPerformances(Collection<String> listOfPerformanceInfo) {
-    throw new UnsupportedOperationException("displayListOfPerformances is not implemented yet.");
+    for (String performanceInfo : listOfPerformanceInfo) {
+      System.out.println(performanceInfo);
+    }
   }
 
   @Override
   public void displaySpecificPerformance(String performanceInfo) {
-    throw new UnsupportedOperationException("displaySpecificPerformance is not implemented yet.");
+    System.out.println(performanceInfo);
   }
 
   @Override
   public void displayBookingRecord(String bookingRecord) {
-    throw new UnsupportedOperationException("displayBookingRecord is not implemented yet.");
+    System.out.println(bookingRecord);
   }
 }

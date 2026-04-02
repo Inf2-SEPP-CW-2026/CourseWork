@@ -24,7 +24,7 @@ public class TestPerformance {
     Event event = new Event(1L, "Live Music", EventType.MUSIC, true, provider);
     Performance performance = new Performance(1L, LocalDateTime.of(2026, 4, 1, 19, 0),
         LocalDateTime.of(2026, 4, 1, 21, 0), List.of("Band"), "Main Hall", 120, false, false, 120,
-        0, 15.0, false, 0.0, PerformanceStatus.ACTIVE, event);
+        0, 15.0, PerformanceStatus.ACTIVE, event);
 
     assertNotNull(performance, "TODO: replace with behaviour-specific assertions.");
   }
