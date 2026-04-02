@@ -29,10 +29,6 @@ public class BookingController extends Controller {
     throw new UnsupportedOperationException("bookPerformance is not implemented yet.");
   }
 
-  public void reviewPerformance() {
-    throw new UnsupportedOperationException("reviewPerformance is not implemented yet.");
-  }
-
   public void cancelBooking() {
     throw new UnsupportedOperationException("cancelBooking is not implemented yet.");
   }
