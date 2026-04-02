@@ -57,15 +57,15 @@ public class Performance {
   }
 
   public boolean checkIfEventIsTicketed() {
-    throw new UnsupportedOperationException("checkIfEventIsTicketed is not implemented yet.");
+    return event != null && event.isTicketed();
   }
 
   public boolean checkIfTicketsLeft(int numTicketsToBuy) {
-    throw new UnsupportedOperationException("checkIfTicketsLeft is not implemented yet.");
+    return numTicketsTotal - numTicketsSold >= numTicketsToBuy;
   }
 
   public double getFinalTicketPrice() {
-    throw new UnsupportedOperationException("getFinalTicketPrice is not implemented yet.");
+    return ticketPrice;
   }
 
   public String getOrganiserEmail() {
@@ -100,6 +100,8 @@ public class Performance {
     bookings.add(booking);
   }
 
+  public void addNumTicketsSold(int numTickets) {
+    numTicketsSold += numTickets;
   boolean isActive() {
     return status == PerformanceStatus.ACTIVE;
   }

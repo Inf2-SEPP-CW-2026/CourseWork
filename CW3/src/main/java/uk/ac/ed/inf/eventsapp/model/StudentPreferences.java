@@ -22,7 +22,20 @@ public class StudentPreferences {
   }
 
   public boolean updatePreferences(String studentRawStringPreferences) {
-    throw new UnsupportedOperationException("updatePreferences is not implemented yet.");
+    if (studentRawStringPreferences == null || studentRawStringPreferences.length() != 5) {
+      return false;
+    }
+    for (char c : studentRawStringPreferences.toCharArray()) {
+      if (c != '0' && c != '1') {
+        return false;
+      }
+    }
+    preferMusicEvents = studentRawStringPreferences.charAt(0) == '1';
+    preferTheaterEvents = studentRawStringPreferences.charAt(1) == '1';
+    preferDanceEvents = studentRawStringPreferences.charAt(2) == '1';
+    preferMovieEvents = studentRawStringPreferences.charAt(3) == '1';
+    preferSportsEvents = studentRawStringPreferences.charAt(4) == '1';
+    return true;
   }
 
   public boolean isPreferMusicEvents() {
