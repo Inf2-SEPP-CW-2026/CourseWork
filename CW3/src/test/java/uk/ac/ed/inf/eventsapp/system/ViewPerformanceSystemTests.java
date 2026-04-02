@@ -1,29 +1,116 @@
 package uk.ac.ed.inf.eventsapp.system;
 
-import uk.ac.ed.inf.eventsapp.controller.EventPerformanceController;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import uk.ac.ed.inf.eventsapp.model.Event;
+import java.util.Collection;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import uk.ac.ed.inf.eventsapp.view.TextUserInterface;
-import uk.ac.ed.inf.eventsapp.view.View;
+import uk.ac.ed.inf.eventsapp.controller.EventPerformanceController;
+import uk.ac.ed.inf.eventsapp.model.EntertainmentProvider;
+import uk.ac.ed.inf.eventsapp.model.Event;
+import uk.ac.ed.inf.eventsapp.model.EventType;
+import uk.ac.ed.inf.eventsapp.model.Student;
+import uk.ac.ed.inf.eventsapp.model.StudentPreferences;
 
 /**
- * System-test scaffold for performance viewing.
+ * System tests for the view-performance use case.
  */
 public class ViewPerformanceSystemTests {
-  private EventPerformanceController eventPerformanceController;
+  private Collection<Event> events;
+  private EntertainmentProvider provider;
 
   @BeforeEach
   void setUp() {
-    View view = new TextUserInterface();
-    eventPerformanceController = new EventPerformanceController(view, new ArrayList<Event>());
+    events = new ArrayList<>();
+    provider = new EntertainmentProvider("provider@example.com", "encrypted_password",
+        "Festival Org", "BN-1234567", "Provider Rep", "Runs live events");
   }
 
   @Test
-  @Disabled("TODO: implement performance-view system tests.")
-  void userCanViewPerformanceDetails() {
-    eventPerformanceController.viewPerformance();
+  void loggedInUserCanViewDetailedPerformanceInformation() {
+    events.add(createEventWithPerformance(1L, "Spring Concert", EventType.MUSIC,
+        LocalDateTime.of(2026, 5, 10, 19, 0), LocalDateTime.of(2026, 5, 10, 21, 0), "McEwan Hall"));
+
+    ScriptedView view = new ScriptedView("1");
+    EventPerformanceController controller = new EventPerformanceController(view, events);
+    controller.setCurrentUser(
+        new Student("student@example.com", "secret", "Alice", 123456789, new StudentPreferences()));
+
+    controller.viewPerformance();
+
+    String displayedPerformance = view.getLastDisplayedPerformance();
+    assertNotNull(displayedPerformance);
+    assertTrue(displayedPerformance.contains("Performance ID: 1"));
+    assertTrue(displayedPerformance.contains("Event: Spring Concert"));
+    assertTrue(displayedPerformance.contains("Time: 2026-05-10 19:00 to 2026-05-10 21:00"));
+    assertTrue(displayedPerformance.contains("Venue: McEwan Hall"));
+    assertTrue(displayedPerformance.contains("Venue details: capacity 300, Indoors, Non-smoking"));
+    assertTrue(displayedPerformance.contains("Performers: Performer"));
+    assertTrue(displayedPerformance.contains("Provider: Festival Org"));
+    assertTrue(displayedPerformance.contains("Ticketing: Ticketed"));
+    assertTrue(
+        displayedPerformance.contains("Ticket details: Price: 12.50 | Tickets remaining: 150"));
+    assertTrue(displayedPerformance.contains("Status: ACTIVE"));
+    assertTrue(view.getErrorMessages().isEmpty());
+  }
+
+  @Test
+  void guestCannotViewPerformanceDetails() {
+    events.add(createEventWithPerformance(1L, "Spring Concert", EventType.MUSIC,
+        LocalDateTime.of(2026, 5, 10, 19, 0), LocalDateTime.of(2026, 5, 10, 21, 0), "McEwan Hall"));
+
+    ScriptedView view = new ScriptedView("1");
+    EventPerformanceController controller = new EventPerformanceController(view, events);
+
+    controller.viewPerformance();
+
+    assertEquals("ERROR: Only logged-in users can view performances.", view.getLastErrorMessage());
+    assertEquals(null, view.getLastDisplayedPerformance());
+  }
+
+  @Test
+  void invalidPerformanceIdShowsAnErrorMessage() {
+    events.add(createEventWithPerformance(1L, "Spring Concert", EventType.MUSIC,
+        LocalDateTime.of(2026, 5, 10, 19, 0), LocalDateTime.of(2026, 5, 10, 21, 0), "McEwan Hall"));
+
+    ScriptedView view = new ScriptedView("abc");
+    EventPerformanceController controller = new EventPerformanceController(view, events);
+    controller.setCurrentUser(
+        new Student("student@example.com", "secret", "Alice", 123456789, new StudentPreferences()));
+
+    controller.viewPerformance();
+
+    assertEquals("ERROR: Performance ID must be a valid positive whole number.",
+        view.getLastErrorMessage());
+    assertEquals(null, view.getLastDisplayedPerformance());
+  }
+
+  @Test
+  void unknownPerformanceIdShowsAnErrorMessage() {
+    events.add(createEventWithPerformance(1L, "Spring Concert", EventType.MUSIC,
+        LocalDateTime.of(2026, 5, 10, 19, 0), LocalDateTime.of(2026, 5, 10, 21, 0), "McEwan Hall"));
+
+    ScriptedView view = new ScriptedView("99");
+    EventPerformanceController controller = new EventPerformanceController(view, events);
+    controller.setCurrentUser(
+        new Student("student@example.com", "secret", "Alice", 123456789, new StudentPreferences()));
+
+    controller.viewPerformance();
+
+    assertEquals("ERROR: Performance not found.", view.getLastErrorMessage());
+    assertEquals(null, view.getLastDisplayedPerformance());
+  }
+
+  private Event createEventWithPerformance(long eventId, String title, EventType type,
+      LocalDateTime startDateTime, LocalDateTime endDateTime, String venue) {
+    Event event = new Event(eventId, title, type, true, provider);
+    event.createPerformance(eventId, startDateTime, endDateTime, List.of("Performer"), venue, 300,
+        false, false, 150, 12.50);
+    return event;
   }
 }
