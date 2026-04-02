@@ -16,7 +16,7 @@ public class Event {
   private final Collection<Performance> performances;
 
   public Event() {
-    this.performances = new ArrayList<Performance>();
+    this.performances = new ArrayList<>();
   }
 
   public Event(long eventID, String title, EventType type, boolean isTicketed,
@@ -26,7 +26,7 @@ public class Event {
     this.type = type;
     this.isTicketed = isTicketed;
     this.organiser = organiser;
-    this.performances = new ArrayList<Performance>();
+    this.performances = new ArrayList<>();
   }
 
   public Performance createPerformance(long performanceID, LocalDateTime startDateTime,
@@ -77,12 +77,39 @@ public class Event {
     return null;
   }
 
+  public Collection<Performance> getPerformancesByDate(LocalDateTime searchDateTime) {
+    ArrayList<Performance> eligiblePerformances = new ArrayList<>();
+    for (Performance performance : performances) {
+      if (performance.isActive()
+          && searchDateTime.toLocalDate().equals(performance.getStartDateTime().toLocalDate())) {
+        eligiblePerformances.add(performance);
+      }
+    }
+    return eligiblePerformances;
+  }
+
   public Collection<String> getInfoOfPerformancesOnDate(LocalDateTime searchDateTime) {
-    throw new UnsupportedOperationException("getInfoOfPerformancesOnDate is not implemented yet.");
+    ArrayList<String> performanceInfoList = new ArrayList<>();
+    for (Performance performance : getPerformancesByDate(searchDateTime)) {
+      performanceInfoList.add(performance.toString());
+    }
+    return performanceInfoList;
   }
 
   private String getOrganiserName() {
-    return organiser == null ? null : organiser.getName();
+    if (organiser == null) {
+      return null;
+    }
+
+    if (organiser.getOrgName() != null && !organiser.getOrgName().isBlank()) {
+      return organiser.getOrgName();
+    }
+
+    if (organiser.getName() != null && !organiser.getName().isBlank()) {
+      return organiser.getName();
+    }
+
+    return organiser.getEmail();
   }
 
   public String getOrganiserEmail() {
@@ -117,6 +144,29 @@ public class Event {
 
   public boolean hasPerformanceAtTimes(LocalDateTime startDateTime, LocalDateTime endDateTime) {
     return hasPerformanceAtSameTimes(startDateTime, endDateTime);
+  }
+
+  public boolean matchesPreferences(StudentPreferences preferences) {
+    if (preferences == null || type == null) {
+      return false;
+    }
+
+    return switch (type) {
+      case MUSIC -> preferences.isPreferMusicEvents();
+      case THEATRE -> preferences.isPreferTheaterEvents();
+      case DANCE -> preferences.isPreferDanceEvents();
+      case MOVIE -> preferences.isPreferMovieEvents();
+      case SPORTS -> preferences.isPreferSportsEvents();
+      case GAMES -> false;
+    };
+  }
+
+  double getAverageReviewRating() {
+    return 0.0;
+  }
+
+  String organiserDisplayName() {
+    return getOrganiserName();
   }
 
   @Override
