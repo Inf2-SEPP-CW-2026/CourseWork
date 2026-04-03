@@ -78,10 +78,37 @@
       "group": "test"
     },
     {
-      "label": "CW3: Package Task 4 Group 22 Zip",
+      "label": "CW3: Package Main Implementation Group 22 Zip",
       "type": "shell",
       "command": "mvn",
       "args": [
+        "-q",
+        "-Pse-implementation-zip",
+        "package"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/CW3",
+        "shell": {
+          "executable": "/bin/zsh",
+          "args": [
+            "-lic"
+          ]
+        }
+      },
+      "group": "build",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      },
+      "detail": "Builds CW3SEImplementationGroup22.zip for the main CW3 submission (excluding Task 4 faculty preregistration files)."
+    },
+    {
+      "label": "CW3: Package Task 4 Group 22 Zip",
+      "type": "shell",
+      "command": "mvn",
+        "args": [
         "-q",
         "-Ptask4-code-review-zip",
         "package"

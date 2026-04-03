@@ -1,14 +1,15 @@
 package uk.ac.ed.inf.eventsapp.controller;
 
-import external.PaymentSystem;
 import java.time.LocalDateTime;
 import java.util.Collection;
+
+import external.PaymentSystem;
 import uk.ac.ed.inf.eventsapp.model.Booking;
+import uk.ac.ed.inf.eventsapp.model.BookingStatus;
 import uk.ac.ed.inf.eventsapp.model.Event;
 import uk.ac.ed.inf.eventsapp.model.Performance;
-import uk.ac.ed.inf.eventsapp.view.View;
-import uk.ac.ed.inf.eventsapp.model.BookingStatus;
 import uk.ac.ed.inf.eventsapp.model.Student;
+import uk.ac.ed.inf.eventsapp.view.View;
 
 /**
  * Handles booking, review, and booking cancellation workflows.
@@ -17,13 +18,15 @@ public class BookingController extends Controller {
   private long nextBookingNumber;
   private final PaymentSystem paymentSystem;
   private final Collection<Event> events;
+  private final Collection<Performance> performances;
   private final Collection<Booking> bookings;
 
   public BookingController(View view, PaymentSystem paymentSystem, Collection<Event> events,
-      Collection<Booking> bookings) {
+      Collection<Performance> performances, Collection<Booking> bookings) {
     super(view);
     this.paymentSystem = paymentSystem;
     this.events = events;
+    this.performances = performances;
     this.bookings = bookings;
     this.nextBookingNumber = 1L;
   }
@@ -36,7 +39,7 @@ public class BookingController extends Controller {
     if (!checkCurrentUserIsStudent()) {
       view.displayError("Only students can book performances.");
       return;
-    }  
+    }
 
     while (performance == null || !bookingPossible) {
       long performanceID;
@@ -48,7 +51,7 @@ public class BookingController extends Controller {
       }
 
       try {
-        numTicketsRequested = Integer.parseInt(view.getInput("Enter number of tickets: "));
+        numTicketsRequested = Integer.parseInt(view.getInput("Enter number of tickets"));
       } catch (NumberFormatException e) {
         view.displayError("Invalid number of tickets");
         continue;
@@ -89,6 +92,11 @@ public class BookingController extends Controller {
     }
   }
 
+  public void reviewPerformance() {
+    throw new UnsupportedOperationException("reviewPerformance is not implemented yet.");
+    // no need to implement
+  }
+
 
   public void cancelBooking() {
     if (!checkCurrentUserIsStudent()) {
@@ -101,7 +109,7 @@ public class BookingController extends Controller {
     while (booking == null) {
       long bookingNumber;
       try {
-        bookingNumber = Long.parseLong(view.getInput("Enter booking number to cancel: "));
+        bookingNumber = Long.parseLong(view.getInput("Enter booking number to cancel"));
       } catch (NumberFormatException e) {
         view.displayError("Invalid booking number");
         continue;
@@ -121,15 +129,15 @@ public class BookingController extends Controller {
     boolean refundSuccessful = paymentSystem.processRefund(booking.getNumTickets(),
         booking.getPerformanceEventTitle(), student.getEmail(), student.getPhoneNumber(),
         booking.getPerformanceOrganiserEmail(), booking.getAmountPaid(), "");
-    
+
     if (!refundSuccessful) {
       view.displayError("There was an issue processing the refund.");
       return;
     }
 
     booking.cancelByStudent();
-    view.displaySuccess("Booking cancelled successfully.");  
-    }
+    view.displaySuccess("Booking cancelled successfully.");
+  }
 
 
   private void addBooking(Booking booking) {
@@ -137,9 +145,8 @@ public class BookingController extends Controller {
   }
 
   private Performance getPerformanceByID(long performanceID) {
-    for (Event event : events) {
-      Performance performance = event.getPerformanceByID(performanceID);
-      if (performance != null) {
+    for (Performance performance : performances) {
+      if (performance.hasID(performanceID)) {
         return performance;
       }
     }

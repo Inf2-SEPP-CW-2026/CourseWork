@@ -1,0 +1,123 @@
+name: CW3 CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  changes:
+    name: CW3 Changed?
+    if: github.repository == 'Inf2-SEPP-CW-2026/CourseWork'
+    runs-on: ubuntu-latest
+    outputs:
+      cw3: ${{ steps.filter.outputs.cw3 }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check changed files
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            cw3:
+              - 'CW3/**'
+              - '.github/workflows/cw3-tests.yml'
+
+  test:
+    name: CW3 Test
+    needs: changes
+    if: github.repository == 'Inf2-SEPP-CW-2026/CourseWork' && needs.changes.outputs.cw3 == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Run CW3 tests
+        run: mvn -q -f CW3/pom.xml test
+
+      - name: Upload Surefire reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cw3-surefire-reports
+          path: CW3/target/surefire-reports
+          if-no-files-found: warn
+
+  package:
+    name: CW3 Package
+    needs:
+      - changes
+      - test
+    if: github.repository == 'Inf2-SEPP-CW-2026/CourseWork' && needs.changes.outputs.cw3 == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Build CW3 main submission zip
+        run: mvn -q -f CW3/pom.xml -Pse-implementation-zip package
+
+      - name: Upload CW3 main submission artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CW3SEImplementationGroup22
+          path: CW3/target/CW3SEImplementationGroup22.zip
+          if-no-files-found: error
+
+  required:
+    name: CW3 Required Check
+    needs:
+      - changes
+      - test
+      - package
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Decide result
+        run: |
+          if [[ "${{ github.repository }}" != "Inf2-SEPP-CW-2026/CourseWork" ]]; then
+            echo "Not running outside the main repository."
+            exit 0
+          fi
+
+          if [[ "${{ needs.changes.outputs.cw3 }}" != "true" ]]; then
+            echo "CW3 not changed; skipping test and package."
+            exit 0
+          fi
+
+          if [[ "${{ needs.test.result }}" != "success" ]]; then
+            echo "CW3 tests did not succeed."
+            exit 1
+          fi
+
+          if [[ "${{ needs.package.result }}" != "success" ]]; then
+            echo "CW3 packaging did not succeed."
+            exit 1
+          fi
+
+          echo "CW3 checks passed."

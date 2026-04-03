@@ -9,6 +9,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import external.PaymentSystem;
+import uk.ac.ed.inf.eventsapp.model.Booking;
 import uk.ac.ed.inf.eventsapp.model.EntertainmentProvider;
 import uk.ac.ed.inf.eventsapp.model.Event;
 import uk.ac.ed.inf.eventsapp.model.EventType;
@@ -16,8 +18,6 @@ import uk.ac.ed.inf.eventsapp.model.Performance;
 import uk.ac.ed.inf.eventsapp.model.Student;
 import uk.ac.ed.inf.eventsapp.model.StudentPreferences;
 import uk.ac.ed.inf.eventsapp.view.View;
-import external.PaymentSystem;
-import uk.ac.ed.inf.eventsapp.model.Booking;
 
 /**
  * Handles event creation, search, view, cancellation, and sponsorship.
@@ -32,11 +32,14 @@ public class EventPerformanceController extends Controller {
   private long nextEventID;
   private long nextPerformanceID;
   private final Collection<Event> events;
+  private final Collection<Performance> performances;
   private final PaymentSystem paymentSystem;
 
-  public EventPerformanceController(View view, Collection<Event> events, PaymentSystem paymentSystem) {
+  public EventPerformanceController(View view, Collection<Event> events,
+      Collection<Performance> performances, PaymentSystem paymentSystem) {
     super(view);
     this.events = events;
+    this.performances = performances;
     this.nextEventID = 1L;
     this.nextPerformanceID = 1L;
     this.paymentSystem = paymentSystem;
@@ -143,9 +146,10 @@ public class EventPerformanceController extends Controller {
       }
 
       try {
-        event.createPerformance(nextPerformanceId, startDateTime, endDateTime, performerNames,
-            venueAddress, venueCapacity, venueIsOutdoors, venueAllowsSmoking, numTickets,
-            ticketPrice);
+        Performance performance = event.createPerformance(nextPerformanceId, startDateTime,
+            endDateTime, performerNames, venueAddress, venueCapacity, venueIsOutdoors,
+            venueAllowsSmoking, numTickets, ticketPrice);
+        addPerformance(performance);
       } catch (IllegalArgumentException exception) {
         view.displayError(exception.getMessage());
         return null;
@@ -258,13 +262,27 @@ public class EventPerformanceController extends Controller {
           view.getInput("Enter cancellation message for affected students");
       for (Booking booking : performance.getActiveBookings()) {
         booking.cancelByProvider();
-        paymentSystem.processRefund(booking.getNumTickets(), performance.getEventTitle(), booking.getStudentEmail(), booking.getStudentPhone(), performance.getOrganiserEmail(),booking.getAmountPaid(), cancellationMessage);
-        }
+        paymentSystem.processRefund(booking.getNumTickets(), performance.getEventTitle(),
+            booking.getStudentEmail(), booking.getStudentPhone(), performance.getOrganiserEmail(),
+            booking.getAmountPaid(), cancellationMessage);
+      }
     }
-  
+
 
     performance.cancel();
     view.displaySuccess("Performance cancelled successfully");
+  }
+
+  @SuppressWarnings("unused")
+  private Boolean checkIfSponsorshipPossible(Performance performance, int amount) {
+    throw new UnsupportedOperationException("checkIfSponsorshipPossible is not implemented yet.");
+    // no need to implement
+  }
+
+  @SuppressWarnings("unused")
+  public void sponserPeformance() {
+    throw new UnsupportedOperationException("sponserPeformance is not implemented yet.");
+    // no need to implement
   }
 
   private void addEvent(Event event) {
@@ -272,11 +290,16 @@ public class EventPerformanceController extends Controller {
   }
 
   private void addPerformance(Performance performance) {
-    throw new UnsupportedOperationException("addPerformance is not implemented yet.");
+    performances.add(performance);
   }
 
   private Event getEventByID(long eventID) {
-    throw new UnsupportedOperationException("getEventByID is not implemented yet.");
+    for (Event event : getEvents()) {
+      if (event.getEventID() == eventID) {
+        return event;
+      }
+    }
+    return null;
   }
 
   private Event getEventByTitle(String title) {
@@ -284,9 +307,8 @@ public class EventPerformanceController extends Controller {
   }
 
   private Performance getPerformanceByID(long performanceID) {
-    for (Event event : getEvents()) {
-      Performance performance = event.getPerformanceByID(performanceID);
-      if (performance != null) {
+    for (Performance performance : performances) {
+      if (performance.hasID(performanceID)) {
         return performance;
       }
     }

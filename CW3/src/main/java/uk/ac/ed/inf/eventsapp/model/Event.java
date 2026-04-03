@@ -77,17 +77,6 @@ public class Event {
     return null;
   }
 
-  public Collection<Performance> getPerformancesByDate(LocalDateTime searchDateTime) {
-    ArrayList<Performance> eligiblePerformances = new ArrayList<>();
-    for (Performance performance : performances) {
-      if (performance.isActive()
-          && searchDateTime.toLocalDate().equals(performance.getStartDateTime().toLocalDate())) {
-        eligiblePerformances.add(performance);
-      }
-    }
-    return eligiblePerformances;
-  }
-
   public Collection<String> getInfoOfPerformancesOnDate(LocalDateTime searchDateTime) {
     ArrayList<String> performanceInfoList = new ArrayList<>();
     for (Performance performance : getPerformancesByDate(searchDateTime)) {
@@ -116,8 +105,13 @@ public class Event {
     return organiser == null ? null : organiser.getEmail();
   }
 
-  public boolean isTicketed() {
-    return isTicketed;
+  public double getAverageReviewRating() {
+    return 0.0;
+  }
+
+  public Collection<String> getAllPerformanceReivews() {
+    throw new UnsupportedOperationException("getAllPerformanceReivews is not implemented yet.");
+    // no need to implement
   }
 
   private boolean hasPerformanceAtSameTimes(LocalDateTime startDateTime,
@@ -132,6 +126,11 @@ public class Event {
 
   private void addPerformance(Performance performance) {
     performances.add(performance);
+  }
+
+  @Override
+  public String toString() {
+    return title;
   }
 
   String titleValue() {
@@ -161,16 +160,26 @@ public class Event {
     };
   }
 
-  double getAverageReviewRating() {
-    return 0.0;
+  public boolean isTicketed() {
+    return isTicketed;
+  }
+
+  public long getEventID() {
+    return eventID;
+  }
+
+  public Collection<Performance> getPerformancesByDate(LocalDateTime searchDateTime) {
+    ArrayList<Performance> eligiblePerformances = new ArrayList<>();
+    for (Performance performance : performances) {
+      if (performance.isActive()
+          && searchDateTime.toLocalDate().equals(performance.getStartDateTime().toLocalDate())) {
+        eligiblePerformances.add(performance);
+      }
+    }
+    return eligiblePerformances;
   }
 
   String organiserDisplayName() {
     return getOrganiserName();
-  }
-
-  @Override
-  public String toString() {
-    return title;
   }
 }

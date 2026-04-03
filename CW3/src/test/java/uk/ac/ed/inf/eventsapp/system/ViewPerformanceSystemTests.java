@@ -1,21 +1,22 @@
 package uk.ac.ed.inf.eventsapp.system;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import external.MockPaymentSystem;
 
+import external.MockPaymentSystem;
 import uk.ac.ed.inf.eventsapp.controller.EventPerformanceController;
 import uk.ac.ed.inf.eventsapp.model.EntertainmentProvider;
 import uk.ac.ed.inf.eventsapp.model.Event;
 import uk.ac.ed.inf.eventsapp.model.EventType;
+import uk.ac.ed.inf.eventsapp.model.Performance;
 import uk.ac.ed.inf.eventsapp.model.Student;
 import uk.ac.ed.inf.eventsapp.model.StudentPreferences;
 
@@ -24,11 +25,14 @@ import uk.ac.ed.inf.eventsapp.model.StudentPreferences;
  */
 public class ViewPerformanceSystemTests {
   private Collection<Event> events;
+  private Collection<Performance> performances;
   private EntertainmentProvider provider;
 
   @BeforeEach
+  @SuppressWarnings("unused")
   void setUp() {
     events = new ArrayList<>();
+    performances = new ArrayList<>();
     provider = new EntertainmentProvider("provider@example.com", "encrypted_password",
         "Festival Org", "BN-1234567", "Provider Rep", "Runs live events");
   }
@@ -39,7 +43,8 @@ public class ViewPerformanceSystemTests {
         LocalDateTime.of(2026, 5, 10, 19, 0), LocalDateTime.of(2026, 5, 10, 21, 0), "McEwan Hall"));
 
     ScriptedView view = new ScriptedView("1");
-    EventPerformanceController controller = new EventPerformanceController(view, events, new MockPaymentSystem());
+    EventPerformanceController controller =
+        new EventPerformanceController(view, events, performances, new MockPaymentSystem());
     controller.setCurrentUser(
         new Student("student@example.com", "secret", "Alice", 123456789, new StudentPreferences()));
 
@@ -67,7 +72,8 @@ public class ViewPerformanceSystemTests {
         LocalDateTime.of(2026, 5, 10, 19, 0), LocalDateTime.of(2026, 5, 10, 21, 0), "McEwan Hall"));
 
     ScriptedView view = new ScriptedView("1");
-    EventPerformanceController controller = new EventPerformanceController(view, events, new MockPaymentSystem());
+    EventPerformanceController controller =
+        new EventPerformanceController(view, events, performances, new MockPaymentSystem());
 
     controller.viewPerformance();
 
@@ -81,7 +87,8 @@ public class ViewPerformanceSystemTests {
         LocalDateTime.of(2026, 5, 10, 19, 0), LocalDateTime.of(2026, 5, 10, 21, 0), "McEwan Hall"));
 
     ScriptedView view = new ScriptedView("abc");
-    EventPerformanceController controller = new EventPerformanceController(view, events, new MockPaymentSystem());
+    EventPerformanceController controller =
+        new EventPerformanceController(view, events, performances, new MockPaymentSystem());
     controller.setCurrentUser(
         new Student("student@example.com", "secret", "Alice", 123456789, new StudentPreferences()));
 
@@ -98,7 +105,8 @@ public class ViewPerformanceSystemTests {
         LocalDateTime.of(2026, 5, 10, 19, 0), LocalDateTime.of(2026, 5, 10, 21, 0), "McEwan Hall"));
 
     ScriptedView view = new ScriptedView("99");
-    EventPerformanceController controller = new EventPerformanceController(view, events, new MockPaymentSystem());
+    EventPerformanceController controller =
+        new EventPerformanceController(view, events, performances, new MockPaymentSystem());
     controller.setCurrentUser(
         new Student("student@example.com", "secret", "Alice", 123456789, new StudentPreferences()));
 
@@ -113,6 +121,7 @@ public class ViewPerformanceSystemTests {
     Event event = new Event(eventId, title, type, true, provider);
     event.createPerformance(eventId, startDateTime, endDateTime, List.of("Performer"), venue, 300,
         false, false, 150, 12.50);
+    performances.add(event.getPerformanceByID(eventId));
     return event;
   }
 }

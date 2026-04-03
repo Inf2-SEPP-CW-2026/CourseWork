@@ -10,6 +10,7 @@ permissions:
 
 jobs:
   pre-commit:
+    if: github.repository == 'Inf2-SEPP-CW-2026/CourseWork'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,4 +22,8 @@ jobs:
           distribution: temurin
           java-version: "17"
           cache: maven
+      - uses: pre-commit/action@v3.0.1
+        with:
+          extra_args: --all-files
       - uses: pre-commit-ci/lite-action@v1.1.0
+        if: always()
