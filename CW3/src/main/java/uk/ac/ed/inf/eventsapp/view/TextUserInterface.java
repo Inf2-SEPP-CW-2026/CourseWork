@@ -7,6 +7,9 @@ import java.util.Scanner;
  * Text-based CLI placeholder.
  */
 public class TextUserInterface implements View {
+  private static final String RESET = "\033[0m";
+  private static final String ERROR_PREFIX = "\033[1;31m[ERROR]: " + RESET;
+  private static final String SUCCESS_PREFIX = "\033[1;34m[SUCCESS]: " + RESET;
   private static final Scanner INPUT_SCANNER = new Scanner(System.in);
 
   @Override
@@ -17,12 +20,12 @@ public class TextUserInterface implements View {
 
   @Override
   public void displaySuccess(String successMessage) {
-    System.out.println("SUCCESS: " + successMessage);
+    System.out.println(SUCCESS_PREFIX + successMessage);
   }
 
   @Override
   public void displayError(String errorMessage) {
-    System.out.println("ERROR: " + errorMessage);
+    System.out.println(ERROR_PREFIX + errorMessage);
   }
 
   @Override
