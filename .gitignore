@@ -29,3 +29,7 @@ CW3/target/
 flattened
 .pre-commit-cache/
 .m2/
+
+.classpath
+.project
+.settings/**

@@ -66,30 +66,18 @@ public class BookingController extends Controller {
 
     Student student = (Student) getCurrentUser();
     double amountPaid = numTicketsRequested * performance.getFinalTicketPrice();
-    
-    Booking booking = new Booking(
-        getNextBookingNumber(),
-        numTicketsRequested,
-        amountPaid,
-        LocalDateTime.now(),
-        BookingStatus.ACTIVE,
-        student,
-        performance
-    );
+
+    Booking booking = new Booking(getNextBookingNumber(), numTicketsRequested, amountPaid,
+        LocalDateTime.now(), BookingStatus.ACTIVE, student, performance);
     nextBookingNumber++;
 
     performance.addBooking(booking);
     student.addBooking(booking);
     addBooking(booking);
-    
-    boolean paymentSuccessful = paymentSystem.processPayment(
-      numTicketsRequested,
-      performance.getEventTitle(),
-      student.getEmail(),
-      student.getPhoneNumber(),
-      performance.getOrganiserEmail(),
-      amountPaid
-    );
+
+    boolean paymentSuccessful = paymentSystem.processPayment(numTicketsRequested,
+        performance.getEventTitle(), student.getEmail(), student.getPhoneNumber(),
+        performance.getOrganiserEmail(), amountPaid);
 
     if (!paymentSuccessful) {
       view.displayError("There was an issue with payment.");
