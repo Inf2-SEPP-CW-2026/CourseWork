@@ -6,16 +6,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Performance entity from the UML diagram.
+ * Performance entity
  */
 public class Performance {
-  private static final DateTimeFormatter SEARCH_RESULT_TIME_FORMATTER =
-      DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
   private long performanceID;
   private LocalDateTime startDateTime;
   private LocalDateTime endDateTime;
-  private Collection<String> performerNames;
+  private final Collection<String> performerNames;
   private String venueAddress;
   private int venueCapacity;
   private boolean venueIsOutdoors;
@@ -23,9 +20,23 @@ public class Performance {
   private int numTicketsTotal;
   private int numTicketsSold;
   private double ticketPrice;
+
+  @SuppressWarnings("unused")
+  private final boolean isSponsered = false; // no need to implement
+  @SuppressWarnings("unused")
+  private final double sponsoredAmount = 0.0; // no need to implement
+  @SuppressWarnings("unused")
+  private final Collection<Integer> reviewRatings = new ArrayList<>(); // no need to implement
+  @SuppressWarnings("unused")
+  private final Collection<String> reviewComments = new ArrayList<>(); // no need to implement
+
   private PerformanceStatus status;
+
   private Event event;
   private final Collection<Booking> bookings;
+
+  private static final DateTimeFormatter SEARCH_RESULT_TIME_FORMATTER =
+      DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
   public Performance() {
     this.performerNames = new ArrayList<>();
@@ -76,10 +87,6 @@ public class Performance {
     return event == null ? null : event.titleValue();
   }
 
-  public LocalDateTime getStartDateTime() {
-    return startDateTime;
-  }
-
   public boolean checkHasNotHappenedYet() {
     return startDateTime != null && startDateTime.isAfter(LocalDateTime.now());
   }
@@ -92,6 +99,39 @@ public class Performance {
     return !getActiveBookings().isEmpty();
   }
 
+  public String getBookingDetailsForRefund() {
+    throw new UnsupportedOperationException("getBookingDetailsForRefund is not implemented yet.");
+  }
+
+  @SuppressWarnings("unused")
+  public void sponsor(double amount) {
+    throw new UnsupportedOperationException("sponsor is not implemented yet.");
+    // no need to implement
+  }
+
+  @SuppressWarnings("unused")
+  public void review(int rating, String comment) {
+    throw new UnsupportedOperationException("review is not implemented yet.");
+    // no need to implement
+  }
+
+  public void addBooking(Booking booking) {
+    bookings.add(booking);
+  }
+
+  @Override
+  public String toString() {
+    return toString(false);
+  }
+
+  public String toString(boolean detailed) {
+    return detailed ? toDetailedString() : toSummaryString();
+  }
+
+  public LocalDateTime getStartDateTime() {
+    return startDateTime;
+  }
+
   public Collection<Booking> getActiveBookings() {
     Collection<Booking> activeBookings = new ArrayList<>();
     for (Booking booking : bookings) {
@@ -102,22 +142,15 @@ public class Performance {
     return activeBookings;
   }
 
-  public String getBookingDetailsForRefund() {
-    throw new UnsupportedOperationException("getBookingDetailsForRefund is not implemented yet.");
-  }
-
-  public void addBooking(Booking booking) {
-    bookings.add(booking);
-  }
-
   public void addNumTicketsSold(int numTickets) {
     numTicketsSold += numTickets;
   }
+
   boolean isActive() {
     return status == PerformanceStatus.ACTIVE;
   }
 
-  boolean hasID(long candidatePerformanceID) {
+  public boolean hasID(long candidatePerformanceID) {
     return performanceID == candidatePerformanceID;
   }
 
@@ -167,14 +200,5 @@ public class Performance {
         "Performance ID: %d%nEvent: %s%nTime: %s to %s%nVenue: %s%nVenue details: capacity %d, %s, %s%nPerformers: %s%nProvider: %s%nTicketing: %s%nTicket details: %s%nStatus: %s",
         performanceID, eventTitle, startTime, endTime, venue, venueCapacity, venueEnvironment,
         smokingPolicy, performerList, organiser, ticketing, ticketInfo, statusLabel);
-  }
-
-  @Override
-  public String toString() {
-    return toString(false);
-  }
-
-  public String toString(boolean detailed) {
-    return detailed ? toDetailedString() : toSummaryString();
   }
 }

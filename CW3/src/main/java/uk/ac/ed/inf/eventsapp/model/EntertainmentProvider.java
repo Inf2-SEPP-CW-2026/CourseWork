@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * Entertainment provider from the UML diagram.
+ * Entertainment provider
  */
 public class EntertainmentProvider extends User {
   private String orgName;
