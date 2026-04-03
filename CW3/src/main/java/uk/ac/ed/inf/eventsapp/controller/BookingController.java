@@ -33,6 +33,11 @@ public class BookingController extends Controller {
     boolean bookingPossible = false;
     int numTicketsRequested = 0;
 
+    if (!checkCurrentUserIsStudent()) {
+      view.displayError("Only students can book performances.");
+      return;
+    }  
+
     while (performance == null || !bookingPossible) {
       long performanceID;
       try {
@@ -86,8 +91,46 @@ public class BookingController extends Controller {
 
 
   public void cancelBooking() {
-    throw new UnsupportedOperationException("cancelBooking is not implemented yet.");
-  }
+    if (!checkCurrentUserIsStudent()) {
+      view.displayError("Only students can cancel bookings.");
+      return;
+    }
+    Student student = (Student) getCurrentUser();
+
+    Booking booking = null;
+    while (booking == null) {
+      long bookingNumber;
+      try {
+        bookingNumber = Long.parseLong(view.getInput("Enter booking number to cancel: "));
+      } catch (NumberFormatException e) {
+        view.displayError("Invalid booking number");
+        continue;
+      }
+      booking = getBookingByNumber(bookingNumber);
+      if (booking == null) {
+        view.displayError("Booking with given number does not exist");
+      } else if (!booking.checkBookedByStudent(student.getEmail())) {
+        view.displayError("You can only cancel your own bookings");
+        booking = null;
+      } else if (!booking.isActive()) {
+        view.displayError("Booking is not active and cannot be cancelled");
+        booking = null;
+      }
+    }
+
+    boolean refundSuccessful = paymentSystem.processRefund(booking.getNumTickets(),
+        booking.getPerformanceEventTitle(), student.getEmail(), student.getPhoneNumber(),
+        booking.getPerformanceOrganiserEmail(), booking.getAmountPaid(), "");
+    
+    if (!refundSuccessful) {
+      view.displayError("There was an issue processing the refund.");
+      return;
+    }
+
+    booking.cancelByStudent();
+    view.displaySuccess("Booking cancelled successfully.");  
+    }
+
 
   private void addBooking(Booking booking) {
     bookings.add(booking);
@@ -110,7 +153,7 @@ public class BookingController extends Controller {
       return false;
     }
     if (!performance.checkIfTicketsLeft(numTickets)) {
-      view.displayError("Requested performance has no ticekts left");
+      view.displayError("Requested performance has no tickets left");
       return false;
     }
     return true;
@@ -121,7 +164,12 @@ public class BookingController extends Controller {
   }
 
   private Booking getBookingByNumber(long bookingNumber) {
-    throw new UnsupportedOperationException("getBookingByNumber is not implemented yet.");
+    for (Booking booking : bookings) {
+      if (booking.hasBookingNumber(bookingNumber)) {
+        return booking;
+      }
+    }
+    return null;
   }
 
   private long getNextBookingNumber() {

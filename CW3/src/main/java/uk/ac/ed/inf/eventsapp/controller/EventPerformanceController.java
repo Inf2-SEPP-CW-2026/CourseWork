@@ -16,6 +16,8 @@ import uk.ac.ed.inf.eventsapp.model.Performance;
 import uk.ac.ed.inf.eventsapp.model.Student;
 import uk.ac.ed.inf.eventsapp.model.StudentPreferences;
 import uk.ac.ed.inf.eventsapp.view.View;
+import external.PaymentSystem;
+import uk.ac.ed.inf.eventsapp.model.Booking;
 
 /**
  * Handles event creation, search, view, cancellation, and sponsorship.
@@ -30,12 +32,14 @@ public class EventPerformanceController extends Controller {
   private long nextEventID;
   private long nextPerformanceID;
   private final Collection<Event> events;
+  private final PaymentSystem paymentSystem;
 
-  public EventPerformanceController(View view, Collection<Event> events) {
+  public EventPerformanceController(View view, Collection<Event> events, PaymentSystem paymentSystem) {
     super(view);
     this.events = events;
     this.nextEventID = 1L;
     this.nextPerformanceID = 1L;
+    this.paymentSystem = paymentSystem;
   }
 
   public Event createEvent() {
@@ -220,7 +224,47 @@ public class EventPerformanceController extends Controller {
   }
 
   public void cancelPerformance() {
-    throw new UnsupportedOperationException("cancelPerformance is not implemented yet.");
+    if (!checkCurrentUserIsEntertainmentProvider()) {
+      view.displayError("Only entertainment providers can cancel performance.");
+      return;
+    }
+    EntertainmentProvider ep = (EntertainmentProvider) currentUser;
+
+    Performance performance = null;
+    boolean validPerformance = false;
+
+    while (performance == null || !validPerformance) {
+      Long performanceID = parsePositiveLong(view.getInput("Enter performance ID to cancel"));
+      if (performanceID == null) {
+        view.displayError("Performance ID must be a valid positive number.");
+        continue;
+      }
+      performance = getPerformanceByID(performanceID);
+      validPerformance = false;
+
+      if (performance == null) {
+        view.displayError("Performance with given ID does not exist.");
+      } else if (!performance.checkCreatedByEP(ep.getEmail())) {
+        view.displayError("You can only cancel your own performance.");
+      } else if (!performance.checkHasNotHappenedYet()) {
+        view.displayError("Performance has already happened");
+      } else {
+        validPerformance = true;
+      }
+    }
+
+    if (performance.hasActiveBookings()) {
+      String cancellationMessage =
+          view.getInput("Enter cancellation message for affected students");
+      for (Booking booking : performance.getActiveBookings()) {
+        booking.cancelByProvider();
+        paymentSystem.processRefund(booking.getNumTickets(), performance.getEventTitle(), booking.getStudentEmail(), booking.getStudentPhone(), performance.getOrganiserEmail(),booking.getAmountPaid(), cancellationMessage);
+        }
+    }
+  
+
+    performance.cancel();
+    view.displaySuccess("Performance cancelled successfully");
   }
 
   private void addEvent(Event event) {

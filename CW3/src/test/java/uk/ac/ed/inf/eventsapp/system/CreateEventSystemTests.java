@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import external.MockPaymentSystem;
 
 import uk.ac.ed.inf.eventsapp.controller.EventPerformanceController;
 import uk.ac.ed.inf.eventsapp.model.EntertainmentProvider;
@@ -79,7 +80,7 @@ public class CreateEventSystemTests {
   @Test
   void guestCannotCreateAnEvent() {
     ScriptedView view = new ScriptedView();
-    EventPerformanceController controller = new EventPerformanceController(view, events);
+    EventPerformanceController controller = new EventPerformanceController(view, events, new MockPaymentSystem());
 
     Event createdEvent = controller.createEvent();
 
@@ -226,7 +227,7 @@ public class CreateEventSystemTests {
   }
 
   private EventPerformanceController controllerForProvider(ScriptedView view) {
-    EventPerformanceController controller = new EventPerformanceController(view, events);
+    EventPerformanceController controller = new EventPerformanceController(view, events, new MockPaymentSystem());
     controller.setCurrentUser(provider);
     return controller;
   }

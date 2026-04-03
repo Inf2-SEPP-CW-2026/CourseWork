@@ -53,7 +53,7 @@ public class Performance {
   }
 
   public void cancel() {
-    throw new UnsupportedOperationException("cancel is not implemented yet.");
+    status = PerformanceStatus.CANCELLED;
   }
 
   public boolean checkIfEventIsTicketed() {
@@ -81,15 +81,25 @@ public class Performance {
   }
 
   public boolean checkHasNotHappenedYet() {
-    throw new UnsupportedOperationException("checkHasNotHappenedYet is not implemented yet.");
+    return startDateTime != null && startDateTime.isAfter(LocalDateTime.now());
   }
 
   public boolean checkCreatedByEP(String email) {
-    throw new UnsupportedOperationException("checkCreatedByEP is not implemented yet.");
+    return event != null && email.equals(event.getOrganiserEmail());
   }
 
   public boolean hasActiveBookings() {
-    throw new UnsupportedOperationException("hasActiveBookings is not implemented yet.");
+    return !getActiveBookings().isEmpty();
+  }
+
+  public Collection<Booking> getActiveBookings() {
+    Collection<Booking> activeBookings = new ArrayList<>();
+    for (Booking booking : bookings) {
+      if (booking.isActive()) {
+        activeBookings.add(booking);
+      }
+    }
+    return activeBookings;
   }
 
   public String getBookingDetailsForRefund() {
@@ -103,7 +113,6 @@ public class Performance {
   public void addNumTicketsSold(int numTickets) {
     numTicketsSold += numTickets;
   }
-
   boolean isActive() {
     return status == PerformanceStatus.ACTIVE;
   }

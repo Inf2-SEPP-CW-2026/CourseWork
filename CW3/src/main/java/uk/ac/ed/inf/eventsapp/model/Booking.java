@@ -29,7 +29,7 @@ public class Booking {
   }
 
   public void cancelByStudent() {
-    throw new UnsupportedOperationException("cancelByStudent is not implemented yet.");
+    status = BookingStatus.CANCELLEDBYSTUDENT;
   }
 
   public void cancelPaymentFailed() {
@@ -37,11 +37,11 @@ public class Booking {
   }
 
   public void cancelByProvider() {
-    throw new UnsupportedOperationException("cancelByProvider is not implemented yet.");
+    status = BookingStatus.CANCELLEDBYPROVIDER;
   }
 
   public boolean checkBookedByStudent(String email) {
-    throw new UnsupportedOperationException("checkBookedByStudent is not implemented yet.");
+    return student != null && student.getEmail().equals(email);
   }
 
   public String getStudentDetails() {
@@ -55,5 +55,36 @@ public class Booking {
         + numTickets + "\nAmount paid: £" + amountPaid;
   }
 
+  public boolean isActive() {
+    return status == BookingStatus.ACTIVE;
+  }
+
+  public int getNumTickets() {
+    return numTickets;
+  }
+
+  public double getAmountPaid() {
+    return amountPaid;
+  }
+
+  public String getStudentEmail() {
+    return student == null ? null : student.getEmail();
+  }
+
+  public int getStudentPhone() {
+    return student == null ? 0 : student.getPhoneNumber();
+  }
+
+  public boolean hasBookingNumber(long candidateBookingNumber) {
+    return bookingNumber == candidateBookingNumber;
+  }
+
+  public String getPerformanceEventTitle() {
+    return performance == null ? null : performance.getEventTitle();
+  }
+
+  public String getPerformanceOrganiserEmail() {
+    return performance == null ? null : performance.getOrganiserEmail();
+  }
 
 }

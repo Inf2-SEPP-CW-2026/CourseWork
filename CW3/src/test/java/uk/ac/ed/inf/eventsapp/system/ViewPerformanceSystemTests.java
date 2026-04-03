@@ -10,6 +10,8 @@ import java.util.Collection;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import external.MockPaymentSystem;
+
 import uk.ac.ed.inf.eventsapp.controller.EventPerformanceController;
 import uk.ac.ed.inf.eventsapp.model.EntertainmentProvider;
 import uk.ac.ed.inf.eventsapp.model.Event;
@@ -37,7 +39,7 @@ public class ViewPerformanceSystemTests {
         LocalDateTime.of(2026, 5, 10, 19, 0), LocalDateTime.of(2026, 5, 10, 21, 0), "McEwan Hall"));
 
     ScriptedView view = new ScriptedView("1");
-    EventPerformanceController controller = new EventPerformanceController(view, events);
+    EventPerformanceController controller = new EventPerformanceController(view, events, new MockPaymentSystem());
     controller.setCurrentUser(
         new Student("student@example.com", "secret", "Alice", 123456789, new StudentPreferences()));
 
@@ -65,7 +67,7 @@ public class ViewPerformanceSystemTests {
         LocalDateTime.of(2026, 5, 10, 19, 0), LocalDateTime.of(2026, 5, 10, 21, 0), "McEwan Hall"));
 
     ScriptedView view = new ScriptedView("1");
-    EventPerformanceController controller = new EventPerformanceController(view, events);
+    EventPerformanceController controller = new EventPerformanceController(view, events, new MockPaymentSystem());
 
     controller.viewPerformance();
 
@@ -79,7 +81,7 @@ public class ViewPerformanceSystemTests {
         LocalDateTime.of(2026, 5, 10, 19, 0), LocalDateTime.of(2026, 5, 10, 21, 0), "McEwan Hall"));
 
     ScriptedView view = new ScriptedView("abc");
-    EventPerformanceController controller = new EventPerformanceController(view, events);
+    EventPerformanceController controller = new EventPerformanceController(view, events, new MockPaymentSystem());
     controller.setCurrentUser(
         new Student("student@example.com", "secret", "Alice", 123456789, new StudentPreferences()));
 
@@ -96,7 +98,7 @@ public class ViewPerformanceSystemTests {
         LocalDateTime.of(2026, 5, 10, 19, 0), LocalDateTime.of(2026, 5, 10, 21, 0), "McEwan Hall"));
 
     ScriptedView view = new ScriptedView("99");
-    EventPerformanceController controller = new EventPerformanceController(view, events);
+    EventPerformanceController controller = new EventPerformanceController(view, events, new MockPaymentSystem());
     controller.setCurrentUser(
         new Student("student@example.com", "secret", "Alice", 123456789, new StudentPreferences()));
 

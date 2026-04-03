@@ -30,7 +30,7 @@ public class Main {
 
     UserController userController = new UserController(view, verificationSystem, users, events);
     EventPerformanceController eventPerformanceController =
-        new EventPerformanceController(view, events);
+        new EventPerformanceController(view, events, paymentSystem);
     BookingController bookingController =
         new BookingController(view, paymentSystem, events, bookings);
     MenuController menuController =
