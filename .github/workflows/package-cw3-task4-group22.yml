@@ -18,6 +18,7 @@ permissions:
 
 jobs:
   package-task4:
+    if: github.repository == 'Inf2-SEPP-CW-2026/CourseWork'
     runs-on: ubuntu-latest
 
     steps:

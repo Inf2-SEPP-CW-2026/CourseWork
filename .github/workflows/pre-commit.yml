@@ -10,6 +10,7 @@ permissions:
 
 jobs:
   pre-commit:
+    if: github.repository == 'Inf2-SEPP-CW-2026/CourseWork'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
