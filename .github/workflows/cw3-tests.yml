@@ -13,11 +13,15 @@ permissions:
 jobs:
   changes:
     name: CW3 Changed?
+    if: github.repository == 'Inf2-SEPP-CW-2026/CourseWork'
     runs-on: ubuntu-latest
     outputs:
       cw3: ${{ steps.filter.outputs.cw3 }}
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Check changed files
         uses: dorny/paths-filter@v3
         id: filter
@@ -30,7 +34,7 @@ jobs:
   test:
     name: CW3 Test
     needs: changes
-    if: needs.changes.outputs.cw3 == 'true'
+    if: github.repository == 'Inf2-SEPP-CW-2026/CourseWork' && needs.changes.outputs.cw3 == 'true'
     runs-on: ubuntu-latest
 
     steps:
@@ -60,7 +64,7 @@ jobs:
     needs:
       - changes
       - test
-    if: needs.changes.outputs.cw3 == 'true'
+    if: github.repository == 'Inf2-SEPP-CW-2026/CourseWork' && needs.changes.outputs.cw3 == 'true'
     runs-on: ubuntu-latest
 
     steps:
@@ -96,6 +100,11 @@ jobs:
     steps:
       - name: Decide result
         run: |
+          if [[ "${{ github.repository }}" != "Inf2-SEPP-CW-2026/CourseWork" ]]; then
+            echo "Not running outside the main repository."
+            exit 0
+          fi
+
           if [[ "${{ needs.changes.outputs.cw3 }}" != "true" ]]; then
             echo "CW3 not changed; skipping test and package."
             exit 0
