@@ -5,16 +5,16 @@ import java.util.Collection;
 import uk.ac.ed.inf.eventsapp.integration.VerificationSystem;
 import uk.ac.ed.inf.eventsapp.model.EntertainmentProvider;
 import uk.ac.ed.inf.eventsapp.model.Event;
+import uk.ac.ed.inf.eventsapp.model.Student;
 import uk.ac.ed.inf.eventsapp.model.User;
 import uk.ac.ed.inf.eventsapp.view.View;
-import uk.ac.ed.inf.eventsapp.model.Student;
 
 /**
  * Handles login, logout, and provider registration.
  */
 public class UserController extends Controller {
-  public static final String PREREGISTERED_USERS_FILE_PATH = "docs/preregistered-users.txt";
-  public static final String PREREGISTERED_ADMIN_FILE_PATH = "docs/preregistered-admin.txt";
+  public static final String PREREGISTERED_USERS_FILE_PATH = "preregistered-users.csv";
+  public static final String PREREGISTERED_ADMIN_FILE_PATH = "preregistered-admin.csv";
 
   private final VerificationSystem verificationSystem;
   private final Collection<User> users;
@@ -54,7 +54,7 @@ public class UserController extends Controller {
     boolean updated = false;
     while (!updated) {
       String input = view.getInput(
-          "Enter preferences (5 digits, 1=yes, 0=no, order: Music Theater Dance Movie Sport): ");
+          "Enter preferences (5 digits, 1=yes, 0=no, order: Music Theater Dance Movie Sport)");
       updated = student.getPreferences().updatePreferences(input);
       if (!updated) {
         view.displayError("Invalid input. Enter exactly 5 characters using only 0 and 1.");

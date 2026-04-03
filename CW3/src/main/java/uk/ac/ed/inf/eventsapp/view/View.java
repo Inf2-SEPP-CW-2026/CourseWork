@@ -3,7 +3,7 @@ package uk.ac.ed.inf.eventsapp.view;
 import java.util.Collection;
 
 /**
- * User-facing output/input abstraction from the UML diagram.
+ * User-facing output/input abstraction
  */
 public interface View {
   String getInput(String inputPrompt);

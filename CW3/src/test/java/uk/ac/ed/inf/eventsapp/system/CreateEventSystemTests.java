@@ -11,23 +11,27 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import external.MockPaymentSystem;
 
+import external.MockPaymentSystem;
 import uk.ac.ed.inf.eventsapp.controller.EventPerformanceController;
 import uk.ac.ed.inf.eventsapp.model.EntertainmentProvider;
 import uk.ac.ed.inf.eventsapp.model.Event;
 import uk.ac.ed.inf.eventsapp.model.EventType;
+import uk.ac.ed.inf.eventsapp.model.Performance;
 
 /**
  * System tests for the create-event use case.
  */
 public class CreateEventSystemTests {
   private Collection<Event> events;
+  private Collection<Performance> performances;
   private EntertainmentProvider provider;
 
   @BeforeEach
+  @SuppressWarnings("unused")
   void setUp() {
     events = new ArrayList<>();
+    performances = new ArrayList<>();
     provider = new EntertainmentProvider("provider@example.com", "encrypted_password",
         "Festival Org", "BN-1234567", "Provider Rep", "Runs live events");
   }
@@ -80,7 +84,8 @@ public class CreateEventSystemTests {
   @Test
   void guestCannotCreateAnEvent() {
     ScriptedView view = new ScriptedView();
-    EventPerformanceController controller = new EventPerformanceController(view, events, new MockPaymentSystem());
+    EventPerformanceController controller =
+        new EventPerformanceController(view, events, performances, new MockPaymentSystem());
 
     Event createdEvent = controller.createEvent();
 
@@ -227,7 +232,8 @@ public class CreateEventSystemTests {
   }
 
   private EventPerformanceController controllerForProvider(ScriptedView view) {
-    EventPerformanceController controller = new EventPerformanceController(view, events, new MockPaymentSystem());
+    EventPerformanceController controller =
+        new EventPerformanceController(view, events, performances, new MockPaymentSystem());
     controller.setCurrentUser(provider);
     return controller;
   }

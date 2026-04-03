@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Scanner;
 
 /**
- * Text-based CLI placeholder.
+ * Text-based CLI
  */
 public class TextUserInterface implements View {
   private static final String RESET = "\033[0m";
@@ -45,3 +45,5 @@ public class TextUserInterface implements View {
     System.out.println(bookingRecord);
   }
 }
+
+
