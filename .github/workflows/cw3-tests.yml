@@ -1,23 +1,36 @@
-name: CW3 Tests
+name: CW3 CI
 
 on:
   pull_request:
-    paths:
-      - "CW3/**"
-      - ".github/workflows/cw3-tests.yml"
   push:
     branches:
       - main
-    paths:
-      - "CW3/**"
-      - ".github/workflows/cw3-tests.yml"
   workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
+  changes:
+    name: CW3 Changed?
+    runs-on: ubuntu-latest
+    outputs:
+      cw3: ${{ steps.filter.outputs.cw3 }}
+
+    steps:
+      - name: Check changed files
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            cw3:
+              - 'CW3/**'
+              - '.github/workflows/cw3-tests.yml'
+
   test:
+    name: CW3 Test
+    needs: changes
+    if: needs.changes.outputs.cw3 == 'true'
     runs-on: ubuntu-latest
 
     steps:
@@ -43,7 +56,11 @@ jobs:
           if-no-files-found: warn
 
   package:
-    needs: test
+    name: CW3 Package
+    needs:
+      - changes
+      - test
+    if: needs.changes.outputs.cw3 == 'true'
     runs-on: ubuntu-latest
 
     steps:
@@ -66,3 +83,32 @@ jobs:
           name: CW3SEImplementationGroup22
           path: CW3/target/CW3SEImplementationGroup22.zip
           if-no-files-found: error
+
+  required:
+    name: CW3 Required Check
+    needs:
+      - changes
+      - test
+      - package
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Decide result
+        run: |
+          if [[ "${{ needs.changes.outputs.cw3 }}" != "true" ]]; then
+            echo "CW3 not changed; skipping test and package."
+            exit 0
+          fi
+
+          if [[ "${{ needs.test.result }}" != "success" ]]; then
+            echo "CW3 tests did not succeed."
+            exit 1
+          fi
+
+          if [[ "${{ needs.package.result }}" != "success" ]]; then
+            echo "CW3 packaging did not succeed."
+            exit 1
+          fi
+
+          echo "CW3 checks passed."
