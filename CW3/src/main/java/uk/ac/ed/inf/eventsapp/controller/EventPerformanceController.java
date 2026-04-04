@@ -260,17 +260,26 @@ public class EventPerformanceController extends Controller {
     if (performance.hasActiveBookings()) {
       String cancellationMessage =
           view.getInput("Enter cancellation message for affected students");
-      for (Booking booking : performance.getActiveBookings()) {
+      Collection<Booking> activeBookings = performance.getActiveBookings();
+
+      for (Booking booking : activeBookings) {
+        boolean refundSuccessful = paymentSystem.processRefund(booking.getNumTickets(),
+            performance.getEventTitle(), booking.getStudentEmail(), booking.getStudentPhone(),
+            performance.getOrganiserEmail(), booking.getAmountPaid(), cancellationMessage);
+        if (!refundSuccessful) {
+          view.displayError(
+              "There was an issue with a refund. The performance cannot be cancelled.");
+          return;
+        }
+      }
+
+      for (Booking booking : activeBookings) {
         booking.cancelByProvider();
-        paymentSystem.processRefund(booking.getNumTickets(), performance.getEventTitle(),
-            booking.getStudentEmail(), booking.getStudentPhone(), performance.getOrganiserEmail(),
-            booking.getAmountPaid(), cancellationMessage);
       }
     }
 
-
     performance.cancel();
-    view.displaySuccess("Performance cancelled successfully");
+    view.displaySuccess("Cancellation Successful!");
   }
 
   @SuppressWarnings("unused")

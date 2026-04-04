@@ -146,7 +146,7 @@ public class Performance {
     numTicketsSold += numTickets;
   }
 
-  boolean isActive() {
+  public boolean isActive() {
     return status == PerformanceStatus.ACTIVE;
   }
 
