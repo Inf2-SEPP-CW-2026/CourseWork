@@ -194,6 +194,7 @@ public class CancelBookingSystemTests {
       public boolean processPayment(int n, String t, String se, int sp, String ep, double a) {
         return false;
       }
+
       @Override
       public boolean processRefund(int n, String t, String se, int sp, String ep, double a,
           String m) {
@@ -202,17 +203,16 @@ public class CancelBookingSystemTests {
     };
 
     ScriptedView view = new ScriptedView("1");
-    BookingController controller = new BookingController(view, failingPayment,
-        new ArrayList<>(), performances, bookings);
+    BookingController controller =
+        new BookingController(view, failingPayment, new ArrayList<>(), performances, bookings);
     controller.setCurrentUser(student);
 
     controller.cancelBooking();
 
-    assertTrue(view.getErrorMessages().stream()
-        .anyMatch(e -> e.contains("issue processing the refund")),
+    assertTrue(
+        view.getErrorMessages().stream().anyMatch(e -> e.contains("issue processing the refund")),
         "Failed refund should prevent booking cancellation.");
-    assertTrue(activeBooking.isActive(),
-        "Booking should remain active when refund fails.");
+    assertTrue(activeBooking.isActive(), "Booking should remain active when refund fails.");
   }
 
   // --- State verification ---
@@ -226,7 +226,6 @@ public class CancelBookingSystemTests {
 
     controller.cancelBooking();
 
-    assertFalse(activeBooking.isActive(),
-        "Booking should no longer be active after cancellation.");
+    assertFalse(activeBooking.isActive(), "Booking should no longer be active after cancellation.");
   }
 }

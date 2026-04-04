@@ -207,6 +207,7 @@ public class CancelPerformanceSystemTests {
       public boolean processPayment(int n, String t, String se, int sp, String ep, double a) {
         return false;
       }
+
       @Override
       public boolean processRefund(int n, String t, String se, int sp, String ep, double a,
           String m) {
@@ -215,14 +216,13 @@ public class CancelPerformanceSystemTests {
     };
 
     ScriptedView view = new ScriptedView("1", "Sorry");
-    EventPerformanceController controller = new EventPerformanceController(view, new ArrayList<>(),
-        performances, failingPayment);
+    EventPerformanceController controller =
+        new EventPerformanceController(view, new ArrayList<>(), performances, failingPayment);
     controller.setCurrentUser(provider);
 
     controller.cancelPerformance();
 
-    assertTrue(view.getErrorMessages().stream()
-        .anyMatch(e -> e.contains("issue with a refund")),
+    assertTrue(view.getErrorMessages().stream().anyMatch(e -> e.contains("issue with a refund")),
         "Failed refund should prevent performance cancellation.");
     assertNull(view.getLastSuccessMessage(),
         "No success message should be shown when refund fails.");
@@ -259,12 +259,12 @@ public class CancelPerformanceSystemTests {
 
   @Test
   void allActiveBookingsAreCancelledByProviderAfterCancellation() {
-    Student student2 = new Student("bob@ed.ac.uk", "pass", "Bob", 7654321,
-        new StudentPreferences());
-    Booking booking1 = new Booking(1L, 2, 30.0, LocalDateTime.now(), BookingStatus.ACTIVE,
-        student, futurePerformance);
-    Booking booking2 = new Booking(2L, 1, 15.0, LocalDateTime.now(), BookingStatus.ACTIVE,
-        student2, futurePerformance);
+    Student student2 =
+        new Student("bob@ed.ac.uk", "pass", "Bob", 7654321, new StudentPreferences());
+    Booking booking1 = new Booking(1L, 2, 30.0, LocalDateTime.now(), BookingStatus.ACTIVE, student,
+        futurePerformance);
+    Booking booking2 = new Booking(2L, 1, 15.0, LocalDateTime.now(), BookingStatus.ACTIVE, student2,
+        futurePerformance);
     futurePerformance.addBooking(booking1);
     futurePerformance.addBooking(booking2);
 

@@ -24,21 +24,19 @@ public class BookPerformanceSystemTests {
 
   @BeforeEach
   void setUp() {
-    provider = new EntertainmentProvider("provider@gmail.com", "password",
-        "EooEle", "123", "Provider", "This is EooEle");
-    student = new Student("student@ed.ac.uk", "password", "Alice", 1234567,
-        new StudentPreferences());
+    provider = new EntertainmentProvider("provider@gmail.com", "password", "EooEle", "123",
+        "Provider", "This is EooEle");
+    student =
+        new Student("student@ed.ac.uk", "password", "Alice", 1234567, new StudentPreferences());
 
     LocalDateTime start = LocalDateTime.now().plusDays(7);
     ticketedEvent = new Event(1L, "Live Music", EventType.MUSIC, true, provider);
     nonTicketedEvent = new Event(2L, "Free Show", EventType.THEATRE, false, provider);
 
-    futurePerformance = new Performance(1L, start, start.plusHours(2),
-        List.of("Band"), "Hall", 100, false, false,
-        100, 0, 15.0, PerformanceStatus.ACTIVE, ticketedEvent);
-    nonTicketedPerformance = new Performance(2L, start, start.plusHours(2),
-        List.of("Actor"), "Stage", 50, false, false,
-        0, 0, 0.0, PerformanceStatus.ACTIVE, nonTicketedEvent);
+    futurePerformance = new Performance(1L, start, start.plusHours(2), List.of("Band"), "Hall", 100,
+        false, false, 100, 0, 15.0, PerformanceStatus.ACTIVE, ticketedEvent);
+    nonTicketedPerformance = new Performance(2L, start, start.plusHours(2), List.of("Actor"),
+        "Stage", 50, false, false, 0, 0, 0.0, PerformanceStatus.ACTIVE, nonTicketedEvent);
 
     performances = new ArrayList<>();
     performances.add(futurePerformance);
@@ -144,8 +142,8 @@ public class BookPerformanceSystemTests {
 
     controller.bookPerformance();
 
-    assertTrue(view.getErrorMessages().contains(
-        "ERROR: Performance with given number does not exist."),
+    assertTrue(
+        view.getErrorMessages().contains("ERROR: Performance with given number does not exist."),
         "Non-existent performance ID should show an error.");
   }
 
@@ -165,9 +163,8 @@ public class BookPerformanceSystemTests {
   @Test
   void bookingSoldOutPerformanceShowsError() {
     LocalDateTime start = LocalDateTime.now().plusDays(7);
-    Performance soldOut = new Performance(3L, start, start.plusHours(2),
-        List.of("Band"), "Hall", 50, false, false,
-        50, 50, 15.0, PerformanceStatus.ACTIVE, ticketedEvent);
+    Performance soldOut = new Performance(3L, start, start.plusHours(2), List.of("Band"), "Hall",
+        50, false, false, 50, 50, 15.0, PerformanceStatus.ACTIVE, ticketedEvent);
     performances.add(soldOut);
 
     ScriptedView view = new ScriptedView("3", "1", "1", "1");
@@ -184,9 +181,8 @@ public class BookPerformanceSystemTests {
   @Test
   void bookingMoreTicketsThanAvailableShowsError() {
     LocalDateTime start = LocalDateTime.now().plusDays(7);
-    Performance fewTickets = new Performance(4L, start, start.plusHours(2),
-        List.of("Band"), "Hall", 50, false, false,
-        10, 0, 15.0, PerformanceStatus.ACTIVE, ticketedEvent);
+    Performance fewTickets = new Performance(4L, start, start.plusHours(2), List.of("Band"), "Hall",
+        50, false, false, 10, 0, 15.0, PerformanceStatus.ACTIVE, ticketedEvent);
     performances.add(fewTickets);
 
     // ID 4 (10 tickets), request 20 → error. Then ID 1, 1 ticket → success.
@@ -210,15 +206,17 @@ public class BookPerformanceSystemTests {
       public boolean processPayment(int n, String t, String se, int sp, String ep, double a) {
         return false;
       }
+
       @Override
-      public boolean processRefund(int n, String t, String se, int sp, String ep, double a, String m) {
+      public boolean processRefund(int n, String t, String se, int sp, String ep, double a,
+          String m) {
         return false;
       }
     };
 
     ScriptedView view = new ScriptedView("1", "1");
-    BookingController controller = new BookingController(view, failingPayment,
-        new ArrayList<>(), performances, bookings);
+    BookingController controller =
+        new BookingController(view, failingPayment, new ArrayList<>(), performances, bookings);
     controller.setCurrentUser(student);
 
     controller.bookPerformance();
