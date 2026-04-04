@@ -267,7 +267,8 @@ public class EventPerformanceController extends Controller {
             performance.getEventTitle(), booking.getStudentEmail(), booking.getStudentPhone(),
             performance.getOrganiserEmail(), booking.getAmountPaid(), cancellationMessage);
         if (!refundSuccessful) {
-          view.displayError("There was an issue with a refund. The performance cannot be cancelled.");
+          view.displayError(
+              "There was an issue with a refund. The performance cannot be cancelled.");
           return;
         }
       }

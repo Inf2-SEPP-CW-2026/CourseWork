@@ -15,6 +15,7 @@ import uk.ac.ed.inf.eventsapp.model.Performance;
 import uk.ac.ed.inf.eventsapp.model.PerformanceStatus;
 import uk.ac.ed.inf.eventsapp.model.Student;
 import uk.ac.ed.inf.eventsapp.model.StudentPreferences;
+
 /**
  * Unit-test scaffold for the UML Performance class.
  */
@@ -39,9 +40,9 @@ public class TestPerformance {
     performance = new Performance(1L, FUTURE_START, FUTURE_END, List.of("Band"), "Main Hall", 120,
         false, false, 100, 0, 15.0, PerformanceStatus.ACTIVE, ticketedEvent);
   }
-  
+
   // --- isActive()/cancel() ---
-  @Test 
+  @Test
   void newPerformanceSIsActive() {
     assertTrue(performance.isActive(), "Newly created perofrmance should be active.");
   }
@@ -58,7 +59,7 @@ public class TestPerformance {
     assertTrue(performance.checkIfEventIsTicketed(),
         "Should return true when linked event is ticketed.");
   }
-  
+
   @Test
   void checkIfEventIsTicketedFalseForNonTicketedEvent() {
     Performance nonTicketed = new Performance(2L, FUTURE_START, FUTURE_END, List.of("Actor"),
@@ -98,12 +99,11 @@ public class TestPerformance {
 
   @Test
   void checkIfTicketsLeftReturnsFalseWhenNotEnoughRemain() {
-      // 100 total, 99 sold — 1 left, but requesting 2
-      Performance almostSoldOut = new Performance(5L, FUTURE_START, FUTURE_END,
-          List.of("Band"), "Main Hall", 100, false, false,
-          100, 99, 15.0, PerformanceStatus.ACTIVE, ticketedEvent);
-      assertFalse(almostSoldOut.checkIfTicketsLeft(2),
-          "Should return false when fewer tickets remain than requested.");
+    // 100 total, 99 sold — 1 left, but requesting 2
+    Performance almostSoldOut = new Performance(5L, FUTURE_START, FUTURE_END, List.of("Band"),
+        "Main Hall", 100, false, false, 100, 99, 15.0, PerformanceStatus.ACTIVE, ticketedEvent);
+    assertFalse(almostSoldOut.checkIfTicketsLeft(2),
+        "Should return false when fewer tickets remain than requested.");
   }
 
 
@@ -114,7 +114,7 @@ public class TestPerformance {
     assertFalse(performance.checkIfTicketsLeft(1),
         "After selling all tickets, no tickets should remain.");
   }
-  
+
   @Test
   void addNumTicketsSoldPartialStillHasTicketsLeft() {
     performance.addNumTicketsSold(50);
@@ -129,7 +129,7 @@ public class TestPerformance {
     assertEquals(15.0, performance.getFinalTicketPrice(),
         "Should return the ticket price set at right price");
   }
-  
+
   // --- checkHasNotHappenedYet()
   @Test
   void checkHasNotHappenedYetReturnsTrueForFuturePerformance() {
@@ -152,7 +152,7 @@ public class TestPerformance {
         "Should return true when the email matches the event organiser.");
   }
 
-  @Test 
+  @Test
   void checkCreatedByEPReturnsFalseForDifferentEmail() {
     assertFalse(performance.checkCreatedByEP("hi@gmail.com"),
         "Should return false when the email does not match the event organiser.");
