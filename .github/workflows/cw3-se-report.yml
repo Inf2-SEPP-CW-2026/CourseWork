@@ -35,6 +35,9 @@ jobs:
       - name: Publish PDF to tracked path
         run: cp CW3/report/build/CW3SEReportGroup22.pdf CW3/report/CW3SEReportGroup22.pdf
 
+      - name: Stage generated PDF
+        run: git add CW3/report/CW3SEReportGroup22.pdf
+
       - uses: pre-commit-ci/lite-action@v1.1.0
         if: always()
         with:
