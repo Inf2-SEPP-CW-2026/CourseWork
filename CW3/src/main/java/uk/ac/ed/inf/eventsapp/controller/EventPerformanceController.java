@@ -83,11 +83,9 @@ public class EventPerformanceController extends Controller {
 
     for (int performanceIndex = 1; performanceIndex <= performanceCount; performanceIndex++) {
       LocalDateTime startDateTime =
-          parseTime(view.getInput("Performance " + performanceIndex + " start (yyyy-MM-dd HH:mm)"),
-              DATE_TIME_FORMATTER);
+          parseTime(view.getInput("Performance " + performanceIndex + " start (yyyy-MM-dd HH:mm)"));
       LocalDateTime endDateTime =
-          parseTime(view.getInput("Performance " + performanceIndex + " end (yyyy-MM-dd HH:mm)"),
-              DATE_TIME_FORMATTER);
+          parseTime(view.getInput("Performance " + performanceIndex + " end (yyyy-MM-dd HH:mm)"));
       if (startDateTime == null || endDateTime == null || !endDateTime.isAfter(startDateTime)) {
         view.displayError("Performance dates/times are invalid.");
         return null;
@@ -420,13 +418,13 @@ public class EventPerformanceController extends Controller {
     }
   }
 
-  private LocalDateTime parseTime(String rawDateTime, DateTimeFormatter formatter) {
+  private LocalDateTime parseTime(String rawDateTime) {
     if (rawDateTime == null) {
       return null;
     }
 
     try {
-      return LocalDateTime.parse(rawDateTime.trim(), formatter);
+      return LocalDateTime.parse(rawDateTime.trim(), DATE_TIME_FORMATTER);
     } catch (DateTimeParseException exception) {
       return null;
     }
