@@ -20,7 +20,7 @@ import uk.ac.ed.inf.eventsapp.model.Student;
 import uk.ac.ed.inf.eventsapp.model.StudentPreferences;
 
 /**
- * Unit-test scaffold for the UML Performance class.
+ * Unit-test scaffold for the Performance class.
  */
 public class TestPerformance {
   private static final LocalDateTime FUTURE_START = LocalDateTime.now().plusDays(30);
