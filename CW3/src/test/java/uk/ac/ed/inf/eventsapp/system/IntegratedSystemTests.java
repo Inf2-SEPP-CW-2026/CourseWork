@@ -23,8 +23,8 @@ import uk.ac.ed.inf.eventsapp.model.StudentPreferences;
 import uk.ac.ed.inf.eventsapp.model.User;
 
 /**
- * Integrated system tests that chain multiple use cases to verify
- * end-to-end application behaviour across shared state.
+ * Integrated system tests that chain multiple use cases to verify end-to-end application behaviour
+ * across shared state.
  */
 public class IntegratedSystemTests {
   private Collection<User> users;
@@ -34,12 +34,10 @@ public class IntegratedSystemTests {
 
   private EntertainmentProvider provider;
   private Student student;
-  
-  private static final String[] CREATE_TICKETED_EVENT_INPUTS = {
-      "Spring Concert", "music", "yes", "1",
-      "2026-05-10 19:00", "2026-05-10 21:00",
-      "Hagan, Bob", "McEwan Hall", "500", "no", "no", "100", "15.50"
-  };
+
+  private static final String[] CREATE_TICKETED_EVENT_INPUTS =
+      {"Spring Concert", "music", "yes", "1", "2026-05-10 19:00", "2026-05-10 21:00", "Hagan, Bob",
+          "McEwan Hall", "500", "no", "no", "100", "15.50"};
 
   @BeforeEach
   void setUp() {
@@ -48,10 +46,10 @@ public class IntegratedSystemTests {
     performances = new ArrayList<>();
     bookings = new ArrayList<>();
 
-    provider = new EntertainmentProvider("provider@gmail.com", "password",
-        "Festival Org", "1234567890", "Hagan", "Runs live events");
-    student = new Student("student@ed.ac.uk", "password", "Hagan", 1234567,
-        new StudentPreferences());
+    provider = new EntertainmentProvider("provider@gmail.com", "password", "Festival Org",
+        "1234567890", "Hagan", "Runs live events");
+    student =
+        new Student("student@ed.ac.uk", "password", "Hagan", 1234567, new StudentPreferences());
     users.add(provider);
     users.add(student);
   }
@@ -61,15 +59,15 @@ public class IntegratedSystemTests {
   // -------------------------------------------------------------------------
 
   private EventPerformanceController epController(ScriptedView view) {
-    EventPerformanceController c = new EventPerformanceController(
-        view, events, performances, new MockPaymentSystem());
+    EventPerformanceController c =
+        new EventPerformanceController(view, events, performances, new MockPaymentSystem());
     c.setCurrentUser(provider);
     return c;
   }
 
   private BookingController bookingController(ScriptedView view) {
-    BookingController c = new BookingController(
-        view, new MockPaymentSystem(), events, performances, bookings);
+    BookingController c =
+        new BookingController(view, new MockPaymentSystem(), events, performances, bookings);
     c.setCurrentUser(student);
     return c;
   }
@@ -134,8 +132,7 @@ public class IntegratedSystemTests {
     bookingController(new ScriptedView("1")).cancelBooking();
 
     Booking booking = bookings.iterator().next();
-    assertFalse(booking.isActive(),
-        "Booking should no longer be active after student cancels.");
+    assertFalse(booking.isActive(), "Booking should no longer be active after student cancels.");
   }
 
   // -------------------------------------------------------------------------
@@ -147,7 +144,8 @@ public class IntegratedSystemTests {
     createTicketedEvent();
     bookingController(new ScriptedView("1", "2")).bookPerformance();
 
-    ScriptedView cancelView = new ScriptedView("1", "Event cancelled due to unforeseen circumstances.");
+    ScriptedView cancelView =
+        new ScriptedView("1", "Event cancelled due to unforeseen circumstances.");
     epController(cancelView).cancelPerformance();
 
     assertEquals("SUCCESS: Cancellation Successful!", cancelView.getLastSuccessMessage(),
@@ -165,8 +163,7 @@ public class IntegratedSystemTests {
     epController(new ScriptedView("1", "Sorry")).cancelPerformance();
 
     Performance perf = performances.iterator().next();
-    assertFalse(perf.isActive(),
-        "Performance should no longer be active after cancellation.");
+    assertFalse(perf.isActive(), "Performance should no longer be active after cancellation.");
   }
 
   // -------------------------------------------------------------------------
@@ -183,8 +180,9 @@ public class IntegratedSystemTests {
         "EP should log in successfully.");
 
     // EP creates event (shares performances collection)
-    EventPerformanceController epc = new EventPerformanceController(
-        new ScriptedView(CREATE_TICKETED_EVENT_INPUTS), events, performances, new MockPaymentSystem());
+    EventPerformanceController epc =
+        new EventPerformanceController(new ScriptedView(CREATE_TICKETED_EVENT_INPUTS), events,
+            performances, new MockPaymentSystem());
     epc.setCurrentUser(uc.getCurrentUser());
     epc.createEvent();
     assertEquals(1, performances.size(), "One performance should exist after event creation.");
@@ -203,8 +201,8 @@ public class IntegratedSystemTests {
     uc3.login();
 
     ScriptedView bookView = new ScriptedView("1", "1");
-    BookingController bc = new BookingController(
-        bookView, new MockPaymentSystem(), events, performances, bookings);
+    BookingController bc =
+        new BookingController(bookView, new MockPaymentSystem(), events, performances, bookings);
     bc.setCurrentUser(uc3.getCurrentUser());
     bc.bookPerformance();
 
@@ -219,11 +217,8 @@ public class IntegratedSystemTests {
   @Test
   void soldOutPerformancePreventsBooking() {
     // Create event with only 5 tickets
-    String[] smallEvent = {
-        "Small Gig", "music", "yes", "1",
-        "2026-06-10 19:00", "2026-06-10 21:00",
-        "Hagan", "Small Hall", "10", "no", "no", "5", "10.00"
-    };
+    String[] smallEvent = {"Small Gig", "music", "yes", "1", "2026-06-10 19:00", "2026-06-10 21:00",
+        "Hagan", "Small Hall", "10", "no", "no", "5", "10.00"};
     epController(new ScriptedView(smallEvent)).createEvent();
 
     // Student books all 5
@@ -242,8 +237,8 @@ public class IntegratedSystemTests {
   @Test
   void providerCancelsPerformanceAllBookingsBecomeInactive() {
     createTicketedEvent();
-    Student student2 = new Student("student2@ed.ac.uk", "password", "Bob", 7654321,
-        new StudentPreferences());
+    Student student2 =
+        new Student("student2@ed.ac.uk", "password", "Bob", 7654321, new StudentPreferences());
     users.add(student2);
 
     // Student 1 books
@@ -251,8 +246,8 @@ public class IntegratedSystemTests {
 
     // Student 2 books
     ScriptedView bookView2 = new ScriptedView("1", "3");
-    BookingController bc2 = new BookingController(
-        bookView2, new MockPaymentSystem(), events, performances, bookings);
+    BookingController bc2 =
+        new BookingController(bookView2, new MockPaymentSystem(), events, performances, bookings);
     bc2.setCurrentUser(student2);
     bc2.bookPerformance();
 
@@ -297,21 +292,20 @@ public class IntegratedSystemTests {
   @Test
   void studentCannotCreateEvent() {
     ScriptedView view = new ScriptedView();
-    EventPerformanceController epc = new EventPerformanceController(
-        view, events, performances, new MockPaymentSystem());
+    EventPerformanceController epc =
+        new EventPerformanceController(view, events, performances, new MockPaymentSystem());
     epc.setCurrentUser(student);
     epc.createEvent();
     assertEquals("ERROR: Only logged-in entertainment providers can create events.",
-        view.getLastErrorMessage(),
-        "Student should be blocked from creating events.");
+        view.getLastErrorMessage(), "Student should be blocked from creating events.");
   }
 
   @Test
   void providerCannotBookPerformance() {
     createTicketedEvent();
     ScriptedView view = new ScriptedView();
-    BookingController bc = new BookingController(
-        view, new MockPaymentSystem(), events, performances, bookings);
+    BookingController bc =
+        new BookingController(view, new MockPaymentSystem(), events, performances, bookings);
     bc.setCurrentUser(provider);
     bc.bookPerformance();
     assertEquals("ERROR: Only students can book performances.", view.getLastErrorMessage(),
@@ -322,8 +316,8 @@ public class IntegratedSystemTests {
   void studentCannotCancelPerformance() {
     createTicketedEvent();
     ScriptedView view = new ScriptedView();
-    EventPerformanceController epc = new EventPerformanceController(
-        view, events, performances, new MockPaymentSystem());
+    EventPerformanceController epc =
+        new EventPerformanceController(view, events, performances, new MockPaymentSystem());
     epc.setCurrentUser(student);
     epc.cancelPerformance();
     assertTrue(view.getLastErrorMessage().contains("entertainment provider"),

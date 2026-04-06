@@ -22,10 +22,10 @@ public class LogOutSystemTests {
 
   @BeforeEach
   void setUp() {
-    student = new Student("student@ed.ac.uk", "password", "Hagan", 1234567,
-        new StudentPreferences());
-    provider = new EntertainmentProvider("provider@gmail.com", "password",
-        "Org", "1234567890", "Bob", "Desc");
+    student =
+        new Student("student@ed.ac.uk", "password", "Hagan", 1234567, new StudentPreferences());
+    provider = new EntertainmentProvider("provider@gmail.com", "password", "Org", "1234567890",
+        "Bob", "Desc");
   }
 
 
@@ -59,8 +59,7 @@ public class LogOutSystemTests {
         new ArrayList<>(), new ArrayList<>());
     controller.setCurrentUser(student);
     controller.logout();
-    assertNull(controller.getCurrentUser(),
-        "Current user should be null after logout.");
+    assertNull(controller.getCurrentUser(), "Current user should be null after logout.");
   }
 
   // --- Access control ---

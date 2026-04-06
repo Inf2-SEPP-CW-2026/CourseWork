@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test;
 import external.MockPaymentSystem;
 
 /**
- * Unit tests for MockPaymentSystem, covering valid inputs, null inputs,
- * and boundary conditions for both processPayment and processRefund.
+ * Unit tests for MockPaymentSystem, covering valid inputs, null inputs, and boundary conditions for
+ * both processPayment and processRefund.
  */
 public class TestMockPaymentSystem {
   private MockPaymentSystem paymentSystem;
@@ -23,18 +23,14 @@ public class TestMockPaymentSystem {
 
   @Test
   void processPaymentReturnsTrueForValidInputs() {
-    assertTrue(
-        paymentSystem.processPayment(2, "Live Music", "student@ed.ac.uk", 123456789,
-            "provider@gmail.com", 30.0),
-        "processPayment should return true for valid inputs.");
+    assertTrue(paymentSystem.processPayment(2, "Live Music", "student@ed.ac.uk", 123456789,
+        "provider@gmail.com", 30.0), "processPayment should return true for valid inputs.");
   }
 
   @Test
   void processPaymentReturnsTrueForMinimumValidTickets() {
-    assertTrue(
-        paymentSystem.processPayment(1, "Live Music", "student@ed.ac.uk", 123456789,
-            "provider@gmail.com", 15.0),
-        "processPayment should return true for exactly 1 ticket.");
+    assertTrue(paymentSystem.processPayment(1, "Live Music", "student@ed.ac.uk", 123456789,
+        "provider@gmail.com", 15.0), "processPayment should return true for exactly 1 ticket.");
   }
 
   @Test
@@ -49,17 +45,15 @@ public class TestMockPaymentSystem {
 
   @Test
   void processPaymentReturnsTrueForZeroPhoneNumber() {
-    assertTrue(
-        paymentSystem.processPayment(2, "Live Music", "student@ed.ac.uk", 0,
-            "provider@gmail.com", 30.0),
+    assertTrue(paymentSystem.processPayment(2, "Live Music", "student@ed.ac.uk", 0,
+        "provider@gmail.com", 30.0),
         "processPayment should return true regardless of phone number value.");
   }
 
   @Test
   void processPaymentReturnsTrueForNegativePhoneNumber() {
-    assertTrue(
-        paymentSystem.processPayment(2, "Live Music", "student@ed.ac.uk", -1,
-            "provider@gmail.com", 30.0),
+    assertTrue(paymentSystem.processPayment(2, "Live Music", "student@ed.ac.uk", -1,
+        "provider@gmail.com", 30.0),
         "processPayment should return true even with negative phone number.");
   }
 
@@ -68,33 +62,28 @@ public class TestMockPaymentSystem {
   @Test
   void processPaymentReturnsFalseForNullStudentEmail() {
     assertFalse(
-        paymentSystem.processPayment(2, "Live Music", null, 123456789,
-            "provider@gmail.com", 30.0),
+        paymentSystem.processPayment(2, "Live Music", null, 123456789, "provider@gmail.com", 30.0),
         "processPayment should return false when studentEmail is null.");
   }
 
   @Test
   void processPaymentReturnsFalseForNullProviderEmail() {
     assertFalse(
-        paymentSystem.processPayment(2, "Live Music", "student@ed.ac.uk", 123456789,
-            null, 30.0),
+        paymentSystem.processPayment(2, "Live Music", "student@ed.ac.uk", 123456789, null, 30.0),
         "processPayment should return false when epEmail is null.");
   }
 
   @Test
   void processPaymentReturnsFalseForNullEventTitle() {
-    assertFalse(
-        paymentSystem.processPayment(2, null, "student@ed.ac.uk", 123456789,
-            "provider@gmail.com", 30.0),
-        "processPayment should return false when eventTitle is null.");
+    assertFalse(paymentSystem.processPayment(2, null, "student@ed.ac.uk", 123456789,
+        "provider@gmail.com", 30.0), "processPayment should return false when eventTitle is null.");
   }
 
   // --- processPayment: multiple nulls ---
 
   @Test
   void processPaymentReturnsFalseWhenAllStringsNull() {
-    assertFalse(
-        paymentSystem.processPayment(2, null, null, 123456789, null, 30.0),
+    assertFalse(paymentSystem.processPayment(2, null, null, 123456789, null, 30.0),
         "processPayment should return false when all string parameters are null.");
   }
 
@@ -103,8 +92,8 @@ public class TestMockPaymentSystem {
   @Test
   void processPaymentReturnsTrueForLargeTicketCount() {
     assertTrue(
-        paymentSystem.processPayment(Integer.MAX_VALUE, "Live Music", "student@ed.ac.uk",
-            123456789, "provider@gmail.com", 30.0),
+        paymentSystem.processPayment(Integer.MAX_VALUE, "Live Music", "student@ed.ac.uk", 123456789,
+            "provider@gmail.com", 30.0),
         "processPayment should return true for very large ticket count.");
   }
 
@@ -189,8 +178,8 @@ public class TestMockPaymentSystem {
   @Test
   void processRefundReturnsTrueForLargeTicketCount() {
     assertTrue(
-        paymentSystem.processRefund(10000, "Live Music", "student@ed.ac.uk",
-            123456789, "provider@gmail.com", 30.0, "Sorry"),
+        paymentSystem.processRefund(10000, "Live Music", "student@ed.ac.uk", 123456789,
+            "provider@gmail.com", 30.0, "Sorry"),
         "processRefund should return true for very large ticket count.");
   }
 
@@ -198,25 +187,20 @@ public class TestMockPaymentSystem {
 
   @Test
   void processRefundReturnsFalseForNullStudentEmail() {
-    assertFalse(
-        paymentSystem.processRefund(2, "Live Music", null, 123456789,
-            "provider@gmail.com", 30.0, "Cancelled"),
-        "processRefund should return false when studentEmail is null.");
+    assertFalse(paymentSystem.processRefund(2, "Live Music", null, 123456789, "provider@gmail.com",
+        30.0, "Cancelled"), "processRefund should return false when studentEmail is null.");
   }
 
   @Test
   void processRefundReturnsFalseForNullProviderEmail() {
-    assertFalse(
-        paymentSystem.processRefund(2, "Live Music", "student@ed.ac.uk", 123456789,
-            null, 30.0, "Cancelled"),
-        "processRefund should return false when epEmail is null.");
+    assertFalse(paymentSystem.processRefund(2, "Live Music", "student@ed.ac.uk", 123456789, null,
+        30.0, "Cancelled"), "processRefund should return false when epEmail is null.");
   }
 
   @Test
   void processRefundReturnsFalseForNullEventTitle() {
-    assertFalse(
-        paymentSystem.processRefund(2, null, "student@ed.ac.uk", 123456789,
-            "provider@gmail.com", 30.0, "Cancelled"),
+    assertFalse(paymentSystem.processRefund(2, null, "student@ed.ac.uk", 123456789,
+        "provider@gmail.com", 30.0, "Cancelled"),
         "processRefund should return false when eventTitle is null.");
   }
 

@@ -88,11 +88,11 @@ public class UserController extends Controller {
       view.displayError("Business registration number could not be verified.");
       return;
     }
-    EntertainmentProvider newEP = new EntertainmentProvider(
-        email, password, orgName, businessNumber, name, description);
+    EntertainmentProvider newEP =
+        new EntertainmentProvider(email, password, orgName, businessNumber, name, description);
     try (FileWriter writer = new FileWriter(REGISTERED_EPS_FILE_PATH, true)) {
-      writer.write(String.format("%n%s,%s,%s,%s,%s,%s",
-          email, password, orgName, businessNumber, name, description));
+      writer.write(String.format("%n%s,%s,%s,%s,%s,%s", email, password, orgName, businessNumber,
+          name, description));
     } catch (IOException e) {
       view.displayError("Failed to save registration.");
       return;
@@ -105,8 +105,7 @@ public class UserController extends Controller {
   private boolean EPAccountAlreadyExists(String email, String orgName, String businessNumber) {
     for (User user : users) {
       if (user instanceof EntertainmentProvider ep) {
-        if (ep.getEmail().equals(email)
-            || ep.getOrgName().equals(orgName)
+        if (ep.getEmail().equals(email) || ep.getOrgName().equals(orgName)
             || ep.getBusinessNumber().equals(businessNumber)) {
           return true;
         }
@@ -138,14 +137,15 @@ public class UserController extends Controller {
   }
 
   /**
-   * Loads pre-registered students, admin staff, and previously registered
-   * entertainment providers from their respective CSV/text files.
+   * Loads pre-registered students, admin staff, and previously registered entertainment providers
+   * from their respective CSV/text files.
    *
-   * <p>Expected formats (comma-separated, lines starting with # are ignored):
+   * <p>
+   * Expected formats (comma-separated, lines starting with # are ignored):
    * <ul>
-   *   <li>preregistered-users.csv: email,password,name,phoneNumber,preferences</li>
-   *   <li>preregistered-admin.csv: email,password,name</li>
-   *   <li>docs/registered-eps.txt: email,password,orgName,businessNumber,name,description</li>
+   * <li>preregistered-users.csv: email,password,name,phoneNumber,preferences</li>
+   * <li>preregistered-admin.csv: email,password,name</li>
+   * <li>docs/registered-eps.txt: email,password,orgName,businessNumber,name,description</li>
    * </ul>
    */
   private void addPreregisteredUsers() {
@@ -153,27 +153,23 @@ public class UserController extends Controller {
       Path studentsPath = Path.of(PREREGISTERED_USERS_FILE_PATH);
       if (Files.exists(studentsPath)) {
         List<String[]> studentRecords = Files.readAllLines(studentsPath, StandardCharsets.UTF_8)
-            .stream().map(String::trim)
-            .filter(l -> !l.isEmpty() && !l.startsWith("#"))
-            .map(l -> l.split(","))
-            .filter(Objects::nonNull).toList();
+            .stream().map(String::trim).filter(l -> !l.isEmpty() && !l.startsWith("#"))
+            .map(l -> l.split(",")).filter(Objects::nonNull).toList();
         for (String[] f : studentRecords) {
           StudentPreferences prefs = new StudentPreferences();
           if (f.length > 4) {
             prefs.updatePreferences(f[4].trim());
           }
-          addUser(new Student(f[0].trim(), f[1].trim(), f[2].trim(),
-              Integer.parseInt(f[3].trim()), prefs));
+          addUser(new Student(f[0].trim(), f[1].trim(), f[2].trim(), Integer.parseInt(f[3].trim()),
+              prefs));
         }
       }
 
       Path adminPath = Path.of(PREREGISTERED_ADMIN_FILE_PATH);
       if (Files.exists(adminPath)) {
-        List<String[]> adminRecords = Files.readAllLines(adminPath, StandardCharsets.UTF_8)
-            .stream().map(String::trim)
-            .filter(l -> !l.isEmpty() && !l.startsWith("#"))
-            .map(l -> l.split(","))
-            .filter(Objects::nonNull).toList();
+        List<String[]> adminRecords = Files.readAllLines(adminPath, StandardCharsets.UTF_8).stream()
+            .map(String::trim).filter(l -> !l.isEmpty() && !l.startsWith("#"))
+            .map(l -> l.split(",")).filter(Objects::nonNull).toList();
         for (String[] f : adminRecords) {
           addUser(new AdminStaff(f[0].trim(), f[1].trim(), f[2].trim()));
         }
@@ -181,15 +177,12 @@ public class UserController extends Controller {
 
       Path epsPath = Path.of(REGISTERED_EPS_FILE_PATH);
       if (Files.exists(epsPath)) {
-        List<String[]> epRecords = Files.readAllLines(epsPath, StandardCharsets.UTF_8)
-            .stream().map(String::trim)
-            .filter(l -> !l.isEmpty() && !l.startsWith("#"))
-            .map(l -> l.split(","))
-            .filter(Objects::nonNull).toList();
+        List<String[]> epRecords = Files.readAllLines(epsPath, StandardCharsets.UTF_8).stream()
+            .map(String::trim).filter(l -> !l.isEmpty() && !l.startsWith("#"))
+            .map(l -> l.split(",")).filter(Objects::nonNull).toList();
         for (String[] f : epRecords) {
-          addUser(new EntertainmentProvider(
-              f[0].trim(), f[1].trim(), f[2].trim(),
-              f[3].trim(), f[4].trim(), f[5].trim()));
+          addUser(new EntertainmentProvider(f[0].trim(), f[1].trim(), f[2].trim(), f[3].trim(),
+              f[4].trim(), f[5].trim()));
         }
       }
     } catch (IOException e) {

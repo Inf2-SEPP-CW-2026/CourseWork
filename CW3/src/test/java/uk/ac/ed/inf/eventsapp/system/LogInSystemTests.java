@@ -25,10 +25,10 @@ public class LogInSystemTests {
   @BeforeEach
   void setUp() {
     users = new ArrayList<>();
-    student = new Student("student@ed.ac.uk", "password", "Hagan", 1234567,
-        new StudentPreferences());
-    provider = new EntertainmentProvider("provider@gmail.com", "password",
-        "Org", "1234567890", "Bob", "Desc");
+    student =
+        new Student("student@ed.ac.uk", "password", "Hagan", 1234567, new StudentPreferences());
+    provider = new EntertainmentProvider("provider@gmail.com", "password", "Org", "1234567890",
+        "Bob", "Desc");
     users.add(student);
     users.add(provider);
   }
@@ -37,8 +37,8 @@ public class LogInSystemTests {
   @Test
   void registeredStudentCanLogIn() {
     ScriptedView view = new ScriptedView("student@ed.ac.uk", "password");
-    UserController controller = new UserController(view, new MockVerificationSystem(),
-        users, new ArrayList<>());
+    UserController controller =
+        new UserController(view, new MockVerificationSystem(), users, new ArrayList<>());
     controller.login();
     assertEquals("SUCCESS: Login successful.", view.getLastSuccessMessage(),
         "Student should receive success message after login.");
@@ -47,8 +47,8 @@ public class LogInSystemTests {
   @Test
   void registeredProviderCanLogIn() {
     ScriptedView view = new ScriptedView("provider@gmail.com", "password");
-    UserController controller = new UserController(view, new MockVerificationSystem(),
-        users, new ArrayList<>());
+    UserController controller =
+        new UserController(view, new MockVerificationSystem(), users, new ArrayList<>());
     controller.login();
     assertEquals("SUCCESS: Login successful.", view.getLastSuccessMessage(),
         "Provider should receive success message after login.");
@@ -57,8 +57,8 @@ public class LogInSystemTests {
   @Test
   void currentUserIsSetAfterLogin() {
     ScriptedView view = new ScriptedView("student@ed.ac.uk", "password");
-    UserController controller = new UserController(view, new MockVerificationSystem(),
-        users, new ArrayList<>());
+    UserController controller =
+        new UserController(view, new MockVerificationSystem(), users, new ArrayList<>());
     controller.login();
     assertEquals(student, controller.getCurrentUser(),
         "Current user should be the logged-in student.");
@@ -69,8 +69,8 @@ public class LogInSystemTests {
   @Test
   void alreadyLoggedInUserCannotLoginAgain() {
     ScriptedView view = new ScriptedView();
-    UserController controller = new UserController(view, new MockVerificationSystem(),
-        users, new ArrayList<>());
+    UserController controller =
+        new UserController(view, new MockVerificationSystem(), users, new ArrayList<>());
     controller.setCurrentUser(student);
     controller.login();
     assertEquals("ERROR: You are already logged in.", view.getLastErrorMessage(),
@@ -82,8 +82,8 @@ public class LogInSystemTests {
   @Test
   void wrongPasswordShowsError() {
     ScriptedView view = new ScriptedView("student@ed.ac.uk", "wrongpass");
-    UserController controller = new UserController(view, new MockVerificationSystem(),
-        users, new ArrayList<>());
+    UserController controller =
+        new UserController(view, new MockVerificationSystem(), users, new ArrayList<>());
     controller.login();
     assertEquals("ERROR: Invalid email or password.", view.getLastErrorMessage(),
         "Wrong password should show an error.");
@@ -92,8 +92,8 @@ public class LogInSystemTests {
   @Test
   void nonExistentEmailShowsError() {
     ScriptedView view = new ScriptedView("unknown@ed.ac.uk", "password");
-    UserController controller = new UserController(view, new MockVerificationSystem(),
-        users, new ArrayList<>());
+    UserController controller =
+        new UserController(view, new MockVerificationSystem(), users, new ArrayList<>());
     controller.login();
     assertEquals("ERROR: Invalid email or password.", view.getLastErrorMessage(),
         "Non-existent email should show an error.");
@@ -102,8 +102,8 @@ public class LogInSystemTests {
   @Test
   void loginIsCaseSensitiveForEmail() {
     ScriptedView view = new ScriptedView("STUDENT@ED.AC.UK", "password");
-    UserController controller = new UserController(view, new MockVerificationSystem(),
-        users, new ArrayList<>());
+    UserController controller =
+        new UserController(view, new MockVerificationSystem(), users, new ArrayList<>());
     controller.login();
     assertEquals("ERROR: Invalid email or password.", view.getLastErrorMessage(),
         "Email matching should be case-sensitive.");
@@ -112,8 +112,8 @@ public class LogInSystemTests {
   @Test
   void loginIsCaseSensitiveForPassword() {
     ScriptedView view = new ScriptedView("student@ed.ac.uk", "PASSWORD");
-    UserController controller = new UserController(view, new MockVerificationSystem(),
-        users, new ArrayList<>());
+    UserController controller =
+        new UserController(view, new MockVerificationSystem(), users, new ArrayList<>());
     controller.login();
     assertEquals("ERROR: Invalid email or password.", view.getLastErrorMessage(),
         "Password matching should be case-sensitive.");
