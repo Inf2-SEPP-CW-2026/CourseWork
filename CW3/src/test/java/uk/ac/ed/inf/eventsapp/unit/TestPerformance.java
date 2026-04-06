@@ -265,6 +265,25 @@ public class TestPerformance {
   }
 
   @Test
+  void getBookingDetailsForRefundSeparatesMultipleActiveBookingsByLine() {
+    Student firstStudent =
+        new Student("first@ed.ac.uk", "password", "First", 1111111, new StudentPreferences());
+    Student secondStudent =
+        new Student("second@ed.ac.uk", "password", "Second", 2222222, new StudentPreferences());
+    Booking first = new Booking(1L, 1, 15.0, LocalDateTime.now(), BookingStatus.ACTIVE,
+        firstStudent, performance);
+    Booking second = new Booking(2L, 2, 30.0, LocalDateTime.now(), BookingStatus.ACTIVE,
+        secondStudent, performance);
+    performance.addBooking(first);
+    performance.addBooking(second);
+
+    String refundDetails = performance.getBookingDetailsForRefund();
+
+    assertTrue(refundDetails.contains(System.lineSeparator()),
+        "Multiple active bookings should be serialised onto separate lines.");
+  }
+
+  @Test
   void getOrganiserEmailReturnsProviderEmail() {
     assertEquals("provider@gmail.com", performance.getOrganiserEmail());
   }
@@ -275,6 +294,22 @@ public class TestPerformance {
   }
 
   @Test
+  void getOrganiserEmailReturnsNullWhenNoEventIsLinked() {
+    Performance withoutEvent = new Performance(7L, FUTURE_START, FUTURE_END, List.of("Band"),
+        "Venue", 50, false, false, 10, 0, 5.0, PerformanceStatus.ACTIVE, null);
+    assertEquals(null, withoutEvent.getOrganiserEmail(),
+        "No organiser email should be available when no event is linked.");
+  }
+
+  @Test
+  void getEventTitleReturnsNullWhenNoEventIsLinked() {
+    Performance withoutEvent = new Performance(8L, FUTURE_START, FUTURE_END, List.of("Band"),
+        "Venue", 50, false, false, 10, 0, 5.0, PerformanceStatus.ACTIVE, null);
+    assertEquals(null, withoutEvent.getEventTitle(),
+        "No event title should be available when no event is linked.");
+  }
+
+  @Test
   void hasIDReturnsTrueForMatchingID() {
     assertTrue(performance.hasID(1L));
   }
@@ -282,6 +317,18 @@ public class TestPerformance {
   @Test
   void hasIDReturnsFalseForDifferentID() {
     assertFalse(performance.hasID(999L));
+  }
+
+  @Test
+  void belongsToEventReturnsTrueForMatchingEventID() {
+    assertTrue(performance.belongsToEvent(1L),
+        "The performance should report that it belongs to its linked event.");
+  }
+
+  @Test
+  void belongsToEventReturnsFalseForDifferentEventID() {
+    assertFalse(performance.belongsToEvent(999L),
+        "The performance should not match a different event ID.");
   }
 
   @Test
@@ -307,6 +354,19 @@ public class TestPerformance {
         "Detailed output should include ticket details.");
     assertTrue(details.contains("Status: ACTIVE"),
         "Detailed output should include the performance status.");
+  }
+
+  @Test
+  void detailedToStringForNonTicketedPerformanceShowsNoTicketsRequired() {
+    Performance nonTicketed = new Performance(9L, FUTURE_START, FUTURE_END, List.of("Actor"),
+        "Stage", 50, true, false, 0, 0, 0.0, PerformanceStatus.ACTIVE, nonTicketedEvent);
+
+    String details = nonTicketed.toString(true);
+
+    assertTrue(details.contains("Ticketing: Non-ticketed"),
+        "Detailed output should identify a non-ticketed performance.");
+    assertTrue(details.contains("Ticket details: No tickets required"),
+        "Detailed output should state that no tickets are required for non-ticketed performances.");
   }
 
 }

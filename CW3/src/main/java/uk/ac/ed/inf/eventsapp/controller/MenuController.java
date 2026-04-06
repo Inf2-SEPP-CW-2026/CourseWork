@@ -19,6 +19,9 @@ public class MenuController extends Controller {
     this.bookingController = bookingController;
   }
 
+  /**
+   * Runs the top-level menu loop until the user chooses to exit the application.
+   */
   public void mainMenu() {
     while (true) {
       syncCurrentUserAcrossControllers();

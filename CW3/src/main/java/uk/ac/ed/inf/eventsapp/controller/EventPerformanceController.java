@@ -344,14 +344,16 @@ public class EventPerformanceController extends Controller {
 
   @SuppressWarnings("unused")
   private Boolean checkIfSponsorshipPossible(Performance performance, int amount) {
+    // Sponsor performance is a 4-person-group-only use case and is intentionally left
+    // unimplemented in the current 3-person-group submission.
     throw new UnsupportedOperationException("checkIfSponsorshipPossible is not implemented yet.");
-    // no need to implement
   }
 
   @SuppressWarnings("unused")
   public void sponsorPerformance() {
+    // Sponsor performance is a 4-person-group-only use case and is intentionally left
+    // unimplemented in the current 3-person-group submission.
     throw new UnsupportedOperationException("sponsorPerformance is not implemented yet.");
-    // no need to implement
   }
 
   private void addEvent(Event event) {

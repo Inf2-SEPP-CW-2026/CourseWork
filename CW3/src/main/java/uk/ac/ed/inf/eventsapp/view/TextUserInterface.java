@@ -9,7 +9,7 @@ import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
 /**
- * Text-based CLI
+ * JLine-backed text user interface for the events application.
  */
 public class TextUserInterface implements View {
   private static final String RESET = "\033[0m";
@@ -18,16 +18,25 @@ public class TextUserInterface implements View {
   private static final Set<String> EXIT_SEQUENCES = Set.of(":q", ":quit", ":exit");
   private final LineReader lineReader;
 
+  /**
+   * Creates a CLI view backed by a {@link LineReader}.
+   */
   public TextUserInterface() {
     this.lineReader = createLineReader();
   }
 
   @Override
+  /**
+   * {@inheritDoc}
+   */
   public String getInput(String inputPrompt) {
     return getInput(inputPrompt, ": ");
   }
 
   @Override
+  /**
+   * {@inheritDoc}
+   */
   public String getInput(String inputPrompt, String promptEnd) {
     String input = lineReader.readLine(inputPrompt + promptEnd);
     if (isExitSequence(input)) {
@@ -37,16 +46,25 @@ public class TextUserInterface implements View {
   }
 
   @Override
+  /**
+   * {@inheritDoc}
+   */
   public void displaySuccess(String successMessage) {
     System.out.println(SUCCESS_PREFIX + successMessage);
   }
 
   @Override
+  /**
+   * {@inheritDoc}
+   */
   public void displayError(String errorMessage) {
     System.out.println(ERROR_PREFIX + errorMessage);
   }
 
   @Override
+  /**
+   * {@inheritDoc}
+   */
   public void displayListOfPerformances(Collection<String> listOfPerformanceInfo) {
     for (String performanceInfo : listOfPerformanceInfo) {
       System.out.println(performanceInfo);
@@ -54,11 +72,17 @@ public class TextUserInterface implements View {
   }
 
   @Override
+  /**
+   * {@inheritDoc}
+   */
   public void displaySpecificPerformance(String performanceInfo) {
     System.out.println(performanceInfo);
   }
 
   @Override
+  /**
+   * {@inheritDoc}
+   */
   public void displayBookingRecord(String bookingRecord) {
     System.out.println(bookingRecord);
   }
@@ -72,6 +96,12 @@ public class TextUserInterface implements View {
     }
   }
 
+  /**
+   * Checks whether a line of input matches one of the reserved exit commands.
+   *
+   * @param input the raw input line
+   * @return {@code true} when the input requests immediate application exit
+   */
   static boolean isExitSequence(String input) {
     return input != null && EXIT_SEQUENCES.contains(input.trim().toLowerCase());
   }

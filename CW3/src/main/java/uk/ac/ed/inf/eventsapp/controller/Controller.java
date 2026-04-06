@@ -22,10 +22,20 @@ public abstract class Controller {
     this.view = view;
   }
 
+  /**
+   * Returns the user currently interacting with the system.
+   *
+   * @return the current user, or {@code null} when the session is a guest session
+   */
   public User getCurrentUser() {
     return currentUser;
   }
 
+  /**
+   * Updates the user associated with the current controller session.
+   *
+   * @param currentUser the user to associate with this controller, or {@code null} for guest mode
+   */
   public void setCurrentUser(User currentUser) {
     this.currentUser = currentUser;
   }
@@ -46,6 +56,14 @@ public abstract class Controller {
     return currentUser instanceof EntertainmentProvider;
   }
 
+  /**
+   * Displays a numbered menu, validates the chosen option, and returns the selected index.
+   *
+   * @param options the menu options to present
+   * @param prompt the heading shown above the menu entries
+   * @param <T> the option type
+   * @return the zero-based index of the chosen option, or {@code -1} when the user selects exit
+   */
   public <T> int selectFromMenu(Collection<T> options, String prompt) {
     List<T> optionList = new ArrayList<>(options);
     while (true) {

@@ -384,6 +384,26 @@ public class IntegratedSystemTests {
   }
 
   @Test
+  void providerCancelsPerformanceThenStudentCanNoLongerFindItInSearch() {
+    createTicketedEvent();
+    bookingController(new ScriptedView("1", "1")).bookPerformance();
+
+    ScriptedView cancelView = new ScriptedView("1", "Cancelled by organiser");
+    epController(cancelView).cancelPerformance();
+
+    ScriptedView searchView = new ScriptedView("2026-05-10");
+    EventPerformanceController searchController =
+        new EventPerformanceController(searchView, events, performances, new MockPaymentSystem());
+    searchController.setCurrentUser(student);
+    searchController.searchforPerformances();
+
+    assertEquals("SUCCESS: Cancellation Successful!", cancelView.getLastSuccessMessage(),
+        "The provider should be able to cancel the booked performance.");
+    assertEquals("ERROR: There are no performances on that date.", searchView.getLastErrorMessage(),
+        "A cancelled performance should no longer appear in search results.");
+  }
+
+  @Test
   void studentEditsPreferencesThenBooks() {
     createTicketedEvent();
 
@@ -400,6 +420,27 @@ public class IntegratedSystemTests {
     bookingController(bookView).bookPerformance();
     assertEquals("SUCCESS: Booking successful", bookView.getLastSuccessMessage(),
         "Student should still be able to book after editing preferences.");
+  }
+
+  @Test
+  void studentCancelsBookingThenReturnedTicketsCanBeBookedAgain() {
+    createTicketedEvent();
+
+    ScriptedView firstBookingView = new ScriptedView("1", "100");
+    bookingController(firstBookingView).bookPerformance();
+
+    ScriptedView cancelView = new ScriptedView("1");
+    bookingController(cancelView).cancelBooking();
+
+    ScriptedView secondBookingView = new ScriptedView("1", "100");
+    bookingController(secondBookingView).bookPerformance();
+
+    assertEquals("SUCCESS: Booking successful", firstBookingView.getLastSuccessMessage(),
+        "The initial booking should succeed and consume all available tickets.");
+    assertEquals("SUCCESS: Booking cancelled successfully.", cancelView.getLastSuccessMessage(),
+        "Cancelling the booking should succeed and return the tickets.");
+    assertEquals("SUCCESS: Booking successful", secondBookingView.getLastSuccessMessage(),
+        "Returned tickets should be available for booking again.");
   }
 
   @Test

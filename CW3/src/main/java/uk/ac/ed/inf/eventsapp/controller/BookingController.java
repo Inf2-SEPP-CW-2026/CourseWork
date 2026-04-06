@@ -20,6 +20,7 @@ import uk.ac.ed.inf.eventsapp.view.View;
 public class BookingController extends Controller {
   private long nextBookingNumber;
   private final PaymentSystem paymentSystem;
+  @SuppressWarnings("unused")
   private final Collection<Event> events;
   private final Collection<Performance> performances;
   private final Collection<Booking> bookings;
@@ -107,9 +108,11 @@ public class BookingController extends Controller {
     }
   }
 
+  @SuppressWarnings("unused")
   public void reviewPerformance() {
+    // Review performance is a 4-person-group-only use case and is intentionally left
+    // unimplemented in the current 3-person-group submission.
     throw new UnsupportedOperationException("reviewPerformance is not implemented yet.");
-    // no need to implement
   }
 
 
@@ -179,6 +182,7 @@ public class BookingController extends Controller {
     return true;
   }
 
+  @SuppressWarnings("unused")
   private Collection<Booking> findBookingsByEventID(long eventID) {
     Collection<Booking> matchingBookings = new java.util.ArrayList<>();
     for (Booking booking : bookings) {
