@@ -1,32 +1,168 @@
 package uk.ac.ed.inf.eventsapp.system;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import org.junit.jupiter.api.AfterEach;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import uk.ac.ed.inf.eventsapp.controller.UserController;
 import uk.ac.ed.inf.eventsapp.integration.MockVerificationSystem;
-import java.util.ArrayList;
-import uk.ac.ed.inf.eventsapp.model.Event;
+import uk.ac.ed.inf.eventsapp.model.EntertainmentProvider;
+import uk.ac.ed.inf.eventsapp.model.Student;
+import uk.ac.ed.inf.eventsapp.model.StudentPreferences;
 import uk.ac.ed.inf.eventsapp.model.User;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import uk.ac.ed.inf.eventsapp.view.TextUserInterface;
-import uk.ac.ed.inf.eventsapp.view.View;
 
 /**
- * System-test scaffold for entertainment-provider registration.
+ * System tests for the register entertainment provider use case.
  */
 public class RegisterEntertainmentProviderSystemTests {
-  private UserController userController;
+  private static final String VALID_EMAIL = "provider@gmail.com";
+  private static final String VALID_PASSWORD = "password";
+  private static final String VALID_ORG = "New Events Ltd";
+  private static final String VALID_BIZ_NUM = "1234567890"; // exactly 10 chars
+  private static final String VALID_NAME = "Hagan";
+  private static final String VALID_DESC = "Live events company";
+
+  private Collection<User> users;
+
+  private static final Path EPS_FILE = Path.of("docs/registered-eps.txt");
 
   @BeforeEach
-  void setUp() {
-    View view = new TextUserInterface();
-    userController = new UserController(view, new MockVerificationSystem(), new ArrayList<User>(),
-        new ArrayList<Event>());
+  void setUp() throws IOException {
+    users = new ArrayList<>();
+    Files.deleteIfExists(EPS_FILE);
+  }
+
+  @AfterEach
+  void tearDown() throws IOException {
+    Files.deleteIfExists(EPS_FILE);
+  }
+
+
+  @Test
+  void providerCanBeRegisteredWithValidBusinessNumber() {
+    ScriptedView view = new ScriptedView(VALID_EMAIL, VALID_PASSWORD, VALID_ORG, VALID_BIZ_NUM,
+        VALID_NAME, VALID_DESC);
+    UserController controller =
+        new UserController(view, new MockVerificationSystem(), users, new ArrayList<>());
+    controller.registerEntertainmentProvider();
+    assertEquals("SUCCESS: Registration successful.", view.getLastSuccessMessage(),
+        "Provider should receive success message after valid registration.");
   }
 
   @Test
-  @Disabled("TODO: implement entertainment-provider registration system tests.")
-  void providerCanBeRegisteredWithValidBusinessNumber() {
-    userController.registerEntertainmentProvider();
+  void registeredProviderIsAddedToUsers() {
+    ScriptedView view = new ScriptedView(VALID_EMAIL, VALID_PASSWORD, VALID_ORG, VALID_BIZ_NUM,
+        VALID_NAME, VALID_DESC);
+    UserController controller =
+        new UserController(view, new MockVerificationSystem(), users, new ArrayList<>());
+    controller.registerEntertainmentProvider();
+    assertTrue(users.stream().anyMatch(u -> u.getEmail().equals(VALID_EMAIL)),
+        "Newly registered provider should be in the users collection.");
+  }
+
+  @Test
+  void registeredProviderCanLogInAfterRegistration() {
+    ScriptedView regView = new ScriptedView(VALID_EMAIL, VALID_PASSWORD, VALID_ORG, VALID_BIZ_NUM,
+        VALID_NAME, VALID_DESC);
+    UserController controller =
+        new UserController(regView, new MockVerificationSystem(), users, new ArrayList<>());
+    controller.registerEntertainmentProvider();
+
+    ScriptedView loginView = new ScriptedView(VALID_EMAIL, VALID_PASSWORD);
+    UserController loginController =
+        new UserController(loginView, new MockVerificationSystem(), users, new ArrayList<>());
+    loginController.login();
+    assertEquals("SUCCESS: Login successful.", loginView.getLastSuccessMessage(),
+        "Newly registered provider should be able to log in.");
+  }
+
+  // --- Access control ---
+
+  @Test
+  void loggedInUserCannotRegisterProvider() {
+    Student student =
+        new Student("student@ed.ac.uk", "pass", "Bob", 1234567, new StudentPreferences());
+    ScriptedView view = new ScriptedView();
+    UserController controller =
+        new UserController(view, new MockVerificationSystem(), users, new ArrayList<>());
+    controller.setCurrentUser(student);
+    controller.registerEntertainmentProvider();
+    assertEquals("ERROR: You must be logged out to register.", view.getLastErrorMessage(),
+        "A logged-in user should not be able to register.");
+  }
+
+  // --- Verification failure ---
+
+  @Test
+  void shortBusinessNumberFailsVerification() {
+    ScriptedView view =
+        new ScriptedView(VALID_EMAIL, VALID_PASSWORD, VALID_ORG, "123", VALID_NAME, VALID_DESC);
+    UserController controller =
+        new UserController(view, new MockVerificationSystem(), users, new ArrayList<>());
+    controller.registerEntertainmentProvider();
+    assertEquals("ERROR: Business registration number could not be verified.",
+        view.getLastErrorMessage(),
+        "Business number shorter than 10 characters should fail verification.");
+  }
+
+  @Test
+  void longBusinessNumberFailsVerification() {
+    ScriptedView view = new ScriptedView(VALID_EMAIL, VALID_PASSWORD, VALID_ORG, "12345678901",
+        VALID_NAME, VALID_DESC);
+    UserController controller =
+        new UserController(view, new MockVerificationSystem(), users, new ArrayList<>());
+    controller.registerEntertainmentProvider();
+    assertEquals("ERROR: Business registration number could not be verified.",
+        view.getLastErrorMessage(),
+        "Business number longer than 10 characters should fail verification.");
+  }
+
+  // --- Duplicate account detection ---
+
+  @Test
+  void duplicateEmailShowsError() {
+    users.add(new EntertainmentProvider(VALID_EMAIL, "oldpass", "Old Org", "0987654321", "Old Name",
+        "Old Desc"));
+    ScriptedView view = new ScriptedView(VALID_EMAIL, VALID_PASSWORD, VALID_ORG, VALID_BIZ_NUM,
+        VALID_NAME, VALID_DESC);
+    UserController controller =
+        new UserController(view, new MockVerificationSystem(), users, new ArrayList<>());
+    controller.registerEntertainmentProvider();
+    assertEquals("ERROR: An account with these details already exists.", view.getLastErrorMessage(),
+        "Duplicate email should be rejected.");
+  }
+
+  @Test
+  void duplicateOrgNameShowsError() {
+    users.add(new EntertainmentProvider("other@example.com", "oldpass", VALID_ORG, "0987654321",
+        "Old Name", "Old Desc"));
+    ScriptedView view = new ScriptedView(VALID_EMAIL, VALID_PASSWORD, VALID_ORG, VALID_BIZ_NUM,
+        VALID_NAME, VALID_DESC);
+    UserController controller =
+        new UserController(view, new MockVerificationSystem(), users, new ArrayList<>());
+    controller.registerEntertainmentProvider();
+    assertEquals("ERROR: An account with these details already exists.", view.getLastErrorMessage(),
+        "Duplicate organisation name should be rejected.");
+  }
+
+  @Test
+  void duplicateBusinessNumberShowsError() {
+    users.add(new EntertainmentProvider("other@example.com", "oldpass", "Other Org", VALID_BIZ_NUM,
+        "Old Name", "Old Desc"));
+    ScriptedView view = new ScriptedView(VALID_EMAIL, VALID_PASSWORD, VALID_ORG, VALID_BIZ_NUM,
+        VALID_NAME, VALID_DESC);
+    UserController controller =
+        new UserController(view, new MockVerificationSystem(), users, new ArrayList<>());
+    controller.registerEntertainmentProvider();
+    assertEquals("ERROR: An account with these details already exists.", view.getLastErrorMessage(),
+        "Duplicate business registration number should be rejected.");
   }
 }
