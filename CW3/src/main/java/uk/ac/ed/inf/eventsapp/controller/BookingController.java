@@ -9,6 +9,7 @@ import uk.ac.ed.inf.eventsapp.model.BookingStatus;
 import uk.ac.ed.inf.eventsapp.model.Event;
 import uk.ac.ed.inf.eventsapp.model.Performance;
 import uk.ac.ed.inf.eventsapp.model.Student;
+import uk.ac.ed.inf.eventsapp.util.InputParsers;
 import uk.ac.ed.inf.eventsapp.view.View;
 
 /**
@@ -43,20 +44,19 @@ public class BookingController extends Controller {
     }
 
     while (performance == null || !bookingPossible) {
-      long performanceID;
-      try {
-        performanceID = Long.parseLong(view.getInput("Enter performance ID"));
-      } catch (NumberFormatException e) {
+      Long performanceID = InputParsers.parsePositiveLong(view.getInput("Enter performance ID"));
+      if (performanceID == null) {
         view.displayError("Invalid performance ID");
         continue;
       }
 
-      try {
-        numTicketsRequested = Integer.parseInt(view.getInput("Enter number of tickets"));
-      } catch (NumberFormatException e) {
+      Integer parsedTicketCount =
+          InputParsers.parsePositiveInteger(view.getInput("Enter number of tickets"));
+      if (parsedTicketCount == null) {
         view.displayError("Invalid number of tickets");
         continue;
       }
+      numTicketsRequested = parsedTicketCount;
 
       performance = getPerformanceByID(performanceID);
       bookingPossible = false;
@@ -109,10 +109,9 @@ public class BookingController extends Controller {
 
     Booking booking = null;
     while (booking == null) {
-      long bookingNumber;
-      try {
-        bookingNumber = Long.parseLong(view.getInput("Enter booking number to cancel"));
-      } catch (NumberFormatException e) {
+      Long bookingNumber =
+          InputParsers.parsePositiveLong(view.getInput("Enter booking number to cancel"));
+      if (bookingNumber == null) {
         view.displayError("Invalid booking number");
         continue;
       }
