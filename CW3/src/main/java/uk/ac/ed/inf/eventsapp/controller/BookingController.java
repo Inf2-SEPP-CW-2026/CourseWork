@@ -31,6 +31,7 @@ public class BookingController extends Controller {
     this.nextBookingNumber = 1L;
   }
 
+  /** Prompts student to select a performance and ticket count, then processes payment. */
   public void bookPerformance() {
     Performance performance = null;
     boolean bookingPossible = false;
@@ -78,6 +79,7 @@ public class BookingController extends Controller {
     student.addBooking(booking);
     addBooking(booking);
 
+    // Booking is created before payment; marked PAYMENTFAILED if charge does not go through.
     boolean paymentSuccessful = paymentSystem.processPayment(numTicketsRequested,
         performance.getEventTitle(), student.getEmail(), student.getPhoneNumber(),
         performance.getOrganiserEmail(), amountPaid);
@@ -153,6 +155,7 @@ public class BookingController extends Controller {
     return null;
   }
 
+  // Validates the performance is ticketed and has enough tickets remaining.
   private boolean checkIfBookingPossible(Performance performance, int numTickets) {
     if (!performance.checkIfEventIsTicketed()) {
       view.displayError(

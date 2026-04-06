@@ -1,16 +1,29 @@
 package uk.ac.ed.inf.eventsapp.system;
 
-import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import external.MockPaymentSystem;
 import external.PaymentSystem;
 import uk.ac.ed.inf.eventsapp.controller.EventPerformanceController;
-import uk.ac.ed.inf.eventsapp.model.*;
+import uk.ac.ed.inf.eventsapp.model.Booking;
+import uk.ac.ed.inf.eventsapp.model.BookingStatus;
+import uk.ac.ed.inf.eventsapp.model.EntertainmentProvider;
+import uk.ac.ed.inf.eventsapp.model.Event;
+import uk.ac.ed.inf.eventsapp.model.EventType;
+import uk.ac.ed.inf.eventsapp.model.Performance;
+import uk.ac.ed.inf.eventsapp.model.PerformanceStatus;
+import uk.ac.ed.inf.eventsapp.model.Student;
+import uk.ac.ed.inf.eventsapp.model.StudentPreferences;
 
 public class CancelPerformanceSystemTests {
   private EntertainmentProvider provider;
@@ -24,7 +37,7 @@ public class CancelPerformanceSystemTests {
     provider = new EntertainmentProvider("provider@gmail.com", "password", "EooEle", "123",
         "Provider", "This is EooEle");
     student =
-        new Student("student@ed.ac.uk", "password", "Alice", 1234567, new StudentPreferences());
+        new Student("student@ed.ac.uk", "password", "Hagan", 1234567, new StudentPreferences());
 
     LocalDateTime start = LocalDateTime.now().plusDays(7);
     event = new Event(1L, "Live Music", EventType.MUSIC, true, provider);
