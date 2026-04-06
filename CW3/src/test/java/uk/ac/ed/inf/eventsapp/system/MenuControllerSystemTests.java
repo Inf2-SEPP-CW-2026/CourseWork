@@ -94,14 +94,18 @@ public class MenuControllerSystemTests {
     ExhaustingScriptedView view = new ExhaustingScriptedView("2", "provider@example.com",
         "password", "Festival Org", "BN-1234567", "Provider Rep", "Runs live events");
     MenuController menuController = createMenuController(view);
+    int initialUserCount = users.size();
 
     assertThrows(IllegalStateException.class, menuController::mainMenu,
         "The scripted menu run should stop once scripted inputs are exhausted.");
 
-    assertEquals(1, users.size(),
-        "Registering from the guest menu should add an entertainment provider to the system.");
-    assertTrue(users.iterator().next() instanceof EntertainmentProvider,
-        "The registered account should be an entertainment provider.");
+    assertEquals(initialUserCount + 1, users.size(),
+        "Registering from the guest menu should add exactly one entertainment provider to the system.");
+    assertTrue(
+        users.stream()
+            .anyMatch(user -> user instanceof EntertainmentProvider provider
+                && "provider@example.com".equals(provider.getEmail())),
+        "The registered entertainment provider should be present in the system.");
     assertEquals("SUCCESS: Registration successful.", view.getLastSuccessMessage(),
         "Successful registration should show a confirmation message.");
   }
