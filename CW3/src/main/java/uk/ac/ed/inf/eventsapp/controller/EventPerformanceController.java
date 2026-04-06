@@ -51,8 +51,8 @@ public class EventPerformanceController extends Controller {
       return null;
     }
 
-    EventType type = InputParsers.parseEventType(
-        view.getInput("Enter event type (music, theatre, dance, movie, sports, games)"));
+    EventType type = InputParsers
+        .parseEventType(view.getInput("Enter event type (music, theatre, dance, movie, sports)"));
     if (type == null) {
       view.displayError("Invalid event type.");
       return null;
@@ -119,7 +119,7 @@ public class EventPerformanceController extends Controller {
       double ticketPrice = 0.0;
       if (isTicketed) {
         Integer parsedTickets = InputParsers.parseNonNegativeInteger(
-            view.getInput("Performance " + performanceIndex + " remaining ticket count"));
+            view.getInput("Performance " + performanceIndex + " total ticket count"));
         Double parsedPrice = InputParsers.parseNonNegativeDouble(
             view.getInput("Performance " + performanceIndex + " ticket price"));
         if (parsedTickets == null || parsedPrice == null) {
@@ -163,11 +163,12 @@ public class EventPerformanceController extends Controller {
       return;
     }
 
-    LocalDate performanceDate =
-        InputParsers.parseDate(view.getInput("Enter search date (yyyy-MM-dd)"));
-    if (performanceDate == null) {
-      view.displayError("Date format is invalid. Use yyyy-MM-dd.");
-      return;
+    LocalDate performanceDate = null;
+    while (performanceDate == null) {
+      performanceDate = InputParsers.parseDate(view.getInput("Enter search date (yyyy-MM-dd)"));
+      if (performanceDate == null) {
+        view.displayError("Date format is invalid. Use yyyy-MM-dd.");
+      }
     }
 
     Collection<String> prioritisedPerformanceInfo = new ArrayList<>();
@@ -205,16 +206,18 @@ public class EventPerformanceController extends Controller {
       return;
     }
 
-    Long performanceID = InputParsers.parsePositiveLong(view.getInput("Performance ID"));
-    if (performanceID == null) {
-      view.displayError("Performance ID must be a valid positive whole number.");
-      return;
-    }
+    Performance performance = null;
+    while (performance == null) {
+      Long performanceID = InputParsers.parsePositiveLong(view.getInput("Performance ID"));
+      if (performanceID == null) {
+        view.displayError("Performance ID must be a valid positive whole number.");
+        continue;
+      }
 
-    Performance performance = getPerformanceByID(performanceID);
-    if (performance == null) {
-      view.displayError("Performance not found.");
-      return;
+      performance = getPerformanceByID(performanceID);
+      if (performance == null) {
+        view.displayError("Performance not found.");
+      }
     }
 
     view.displaySpecificPerformance(performance.toString(true));
@@ -228,38 +231,73 @@ public class EventPerformanceController extends Controller {
     EntertainmentProvider ep = (EntertainmentProvider) currentUser;
 
     Performance performance = null;
-    boolean validPerformance = false;
-
-    while (performance == null || !validPerformance) {
+    while (performance == null) {
       Long performanceID =
           InputParsers.parsePositiveLong(view.getInput("Enter performance ID to cancel"));
       if (performanceID == null) {
         view.displayError("Performance ID must be a valid positive number.");
         continue;
       }
-      performance = getPerformanceByID(performanceID);
-      validPerformance = false;
 
-      if (performance == null) {
+      Performance candidatePerformance = getPerformanceByID(performanceID);
+      if (candidatePerformance == null) {
         view.displayError("Performance with given ID does not exist.");
-      } else if (!performance.checkCreatedByEP(ep.getEmail())) {
-        view.displayError("You can only cancel your own performance.");
-      } else if (!performance.checkHasNotHappenedYet()) {
-        view.displayError("Performance has already happened");
-      } else {
-        validPerformance = true;
+        continue;
       }
+
+      if (!candidatePerformance.checkCreatedByEP(ep.getEmail())) {
+        view.displayError("You can only cancel your own performance.");
+        continue;
+      }
+
+      if (!candidatePerformance.checkHasNotHappenedYet()) {
+        view.displayError("Performance has already happened");
+        continue;
+      }
+
+      performance = candidatePerformance;
     }
 
     if (performance.hasActiveBookings()) {
-      String cancellationMessage =
-          view.getInput("Enter cancellation message for affected students");
       Collection<Booking> activeBookings = performance.getActiveBookings();
+      String bookingDetailsForRefund = performance.getBookingDetailsForRefund();
+      // we need to fit the UML model, though it may not be efficient to use string to pass booking
+      // details and parse details from string for refund instead of using getter directly
+      String cancellationMessage = "";
+      while (cancellationMessage.isBlank()) {
+        cancellationMessage =
+            view.getInput("Provide a cancellation message for affected students").trim();
+        if (cancellationMessage.isBlank()) {
+          view.displayError("Cancellation message is required.");
+        }
+      }
 
-      for (Booking booking : activeBookings) {
-        boolean refundSuccessful = paymentSystem.processRefund(booking.getNumTickets(),
-            performance.getEventTitle(), booking.getStudentEmail(), booking.getStudentPhone(),
-            performance.getOrganiserEmail(), booking.getAmountPaid(), cancellationMessage);
+      if (bookingDetailsForRefund.isBlank()) {
+        view.displayError("There are no active booking details available for refund.");
+        return;
+      }
+
+      String[] refundDetailLines = bookingDetailsForRefund.split("\\R");
+      if (refundDetailLines.length != activeBookings.size()) {
+        view.displayError("Active booking refund details are inconsistent.");
+        return;
+      }
+
+      Collection<RefundDetails> refundDetailsCollection = new ArrayList<>();
+      for (String refundDetailLine : refundDetailLines) {
+        RefundDetails refundDetails = parseRefundDetails(refundDetailLine);
+        if (refundDetails == null) {
+          view.displayError("Active booking refund details are inconsistent.");
+          return;
+        }
+
+        refundDetailsCollection.add(refundDetails);
+      }
+
+      for (RefundDetails refundDetails : refundDetailsCollection) {
+        boolean refundSuccessful = paymentSystem.processRefund(refundDetails.numTickets(),
+            performance.getEventTitle(), refundDetails.studentEmail(), refundDetails.studentPhone(),
+            performance.getOrganiserEmail(), refundDetails.amountPaid(), cancellationMessage);
         if (!refundSuccessful) {
           view.displayError(
               "There was an issue with a refund. The performance cannot be cancelled.");
@@ -276,6 +314,34 @@ public class EventPerformanceController extends Controller {
     view.displaySuccess("Cancellation Successful!");
   }
 
+  private RefundDetails parseRefundDetails(String refundDetailLine) {
+    if (refundDetailLine == null || refundDetailLine.isBlank()) {
+      return null;
+    }
+
+    String[] parts = refundDetailLine.split(";", 3);
+    if (parts.length != 3) {
+      return null;
+    }
+
+    Integer numTickets = InputParsers.parsePositiveInteger(parts[0]);
+    Double amountPaid = InputParsers.parseNonNegativeDouble(parts[1]);
+    String[] studentDetails = parts[2].split("\\|", 3);
+    if (numTickets == null || amountPaid == null || studentDetails.length != 3) {
+      return null;
+    }
+
+    Integer studentPhone = InputParsers.parsePhoneNumber(studentDetails[2]);
+    if (studentDetails[1].isBlank() || studentPhone == null) {
+      return null;
+    }
+
+    return new RefundDetails(numTickets, amountPaid, studentDetails[1], studentPhone);
+  }
+
+  private record RefundDetails(int numTickets, double amountPaid, String studentEmail,
+      int studentPhone) {}
+
   @SuppressWarnings("unused")
   private Boolean checkIfSponsorshipPossible(Performance performance, int amount) {
     throw new UnsupportedOperationException("checkIfSponsorshipPossible is not implemented yet.");
@@ -283,8 +349,8 @@ public class EventPerformanceController extends Controller {
   }
 
   @SuppressWarnings("unused")
-  public void sponserPeformance() {
-    throw new UnsupportedOperationException("sponserPeformance is not implemented yet.");
+  public void sponsorPerformance() {
+    throw new UnsupportedOperationException("sponsorPerformance is not implemented yet.");
     // no need to implement
   }
 
@@ -306,7 +372,16 @@ public class EventPerformanceController extends Controller {
   }
 
   private Event getEventByTitle(String title) {
-    throw new UnsupportedOperationException("getEventByTitle is not implemented yet.");
+    if (title == null || title.isBlank()) {
+      return null;
+    }
+
+    for (Event event : getEvents()) {
+      if (event.hasTitle(title)) {
+        return event;
+      }
+    }
+    return null;
   }
 
   private Performance getPerformanceByID(long performanceID) {

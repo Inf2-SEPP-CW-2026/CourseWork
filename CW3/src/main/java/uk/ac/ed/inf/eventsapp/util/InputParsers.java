@@ -13,6 +13,7 @@ import uk.ac.ed.inf.eventsapp.model.EventType;
  * Shared parsing helpers for user-entered text values.
  */
 public final class InputParsers {
+  private static final Pattern EMAIL_PATTERN = Pattern.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
   private static final DateTimeFormatter DATE_TIME_FORMATTER =
       DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
   private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -39,6 +40,10 @@ public final class InputParsers {
     } catch (IllegalArgumentException exception) {
       return null;
     }
+  }
+
+  public static boolean isValidEmail(String email) {
+    return email != null && !email.isBlank() && EMAIL_PATTERN.matcher(email.trim()).matches();
   }
 
   public static Boolean parseBoolean(String rawBoolean) {
@@ -80,6 +85,18 @@ public final class InputParsers {
     try {
       int parsed = Integer.parseInt(rawInteger.trim());
       return parsed >= 0 ? parsed : null;
+    } catch (NumberFormatException exception) {
+      return null;
+    }
+  }
+
+  public static Integer parsePhoneNumber(String rawPhoneNumber) {
+    if (rawPhoneNumber == null) {
+      return null;
+    }
+
+    try {
+      return Integer.valueOf(rawPhoneNumber.trim());
     } catch (NumberFormatException exception) {
       return null;
     }

@@ -156,7 +156,6 @@ public class Event {
       case DANCE -> preferences.isPreferDanceEvents();
       case MOVIE -> preferences.isPreferMovieEvents();
       case SPORTS -> preferences.isPreferSportsEvents();
-      case GAMES -> false;
     };
   }
 

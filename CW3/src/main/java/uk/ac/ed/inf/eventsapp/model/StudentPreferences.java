@@ -1,5 +1,8 @@
 package uk.ac.ed.inf.eventsapp.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Student preferences from the UML diagram.
  */
@@ -22,20 +25,55 @@ public class StudentPreferences {
   }
 
   public boolean updatePreferences(String studentRawStringPreferences) {
-    if (studentRawStringPreferences == null || studentRawStringPreferences.length() != 5) {
+    if (studentRawStringPreferences == null) {
       return false;
     }
-    for (char c : studentRawStringPreferences.toCharArray()) {
-      if (c != '0' && c != '1') {
+
+    clearPreferences();
+    String trimmedPreferences = studentRawStringPreferences.trim();
+    if (trimmedPreferences.isEmpty()) {
+      return true;
+    }
+
+    String[] rawPreferences = trimmedPreferences.split(",");
+    if (rawPreferences.length > 3) {
+      return false;
+    }
+
+    Set<String> seenPreferences = new HashSet<>();
+    for (String rawPreference : rawPreferences) {
+      String normalisedPreference = rawPreference.trim().toUpperCase().replace(' ', '_');
+      if (normalisedPreference.isEmpty() || !seenPreferences.add(normalisedPreference)) {
+        clearPreferences();
         return false;
       }
+
+      if ("THEATER".equals(normalisedPreference)) {
+        normalisedPreference = "THEATRE";
+      }
+
+      switch (normalisedPreference) {
+        case "MUSIC" -> preferMusicEvents = true;
+        case "THEATRE" -> preferTheaterEvents = true;
+        case "DANCE" -> preferDanceEvents = true;
+        case "MOVIE" -> preferMovieEvents = true;
+        case "SPORTS" -> preferSportsEvents = true;
+        default -> {
+          clearPreferences();
+          return false;
+        }
+      }
     }
-    preferMusicEvents = studentRawStringPreferences.charAt(0) == '1';
-    preferTheaterEvents = studentRawStringPreferences.charAt(1) == '1';
-    preferDanceEvents = studentRawStringPreferences.charAt(2) == '1';
-    preferMovieEvents = studentRawStringPreferences.charAt(3) == '1';
-    preferSportsEvents = studentRawStringPreferences.charAt(4) == '1';
+
     return true;
+  }
+
+  private void clearPreferences() {
+    preferMusicEvents = false;
+    preferTheaterEvents = false;
+    preferDanceEvents = false;
+    preferMovieEvents = false;
+    preferSportsEvents = false;
   }
 
   public boolean isPreferMusicEvents() {

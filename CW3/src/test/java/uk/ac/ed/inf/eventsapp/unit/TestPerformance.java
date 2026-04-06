@@ -1,16 +1,19 @@
 package uk.ac.ed.inf.eventsapp.unit;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import uk.ac.ed.inf.eventsapp.model.Booking;
 import uk.ac.ed.inf.eventsapp.model.BookingStatus;
+import uk.ac.ed.inf.eventsapp.model.EntertainmentProvider;
 import uk.ac.ed.inf.eventsapp.model.Event;
 import uk.ac.ed.inf.eventsapp.model.EventType;
-import uk.ac.ed.inf.eventsapp.model.EntertainmentProvider;
 import uk.ac.ed.inf.eventsapp.model.Performance;
 import uk.ac.ed.inf.eventsapp.model.PerformanceStatus;
 import uk.ac.ed.inf.eventsapp.model.Student;
@@ -31,6 +34,7 @@ public class TestPerformance {
   private Performance performance;
 
   @BeforeEach
+  @SuppressWarnings("unused")
   void setUp() {
     provider = new EntertainmentProvider("provider@gmail.com", "password", "EooEle", "1234567890",
         "Peter", "This is EooEle");
@@ -122,6 +126,21 @@ public class TestPerformance {
         "After selling some tickets, remaining tickets should still be available.");
   }
 
+  @Test
+  void removeNumTicketsSoldRestoresTicketAvailability() {
+    performance.addNumTicketsSold(100);
+    performance.removeNumTicketsSold(1);
+    assertTrue(performance.checkIfTicketsLeft(1),
+        "Removing sold tickets should restore ticket availability.");
+  }
+
+  @Test
+  void removeNumTicketsSoldDoesNotGoBelowZero() {
+    performance.removeNumTicketsSold(10);
+    assertTrue(performance.checkIfTicketsLeft(100),
+        "Removing sold tickets from zero sold tickets should not make sold tickets negative.");
+  }
+
 
   // --- getFinalTicketPrice()
   @Test
@@ -203,6 +222,49 @@ public class TestPerformance {
   }
 
   @Test
+  void getActiveBookingsExcludesPaymentFailedAndProviderCancelledBookings() {
+    Student student =
+        new Student("student@ed.ac.uk", "password", "Hagan", 1234567, new StudentPreferences());
+    Booking active =
+        new Booking(1L, 1, 15.0, LocalDateTime.now(), BookingStatus.ACTIVE, student, performance);
+    Booking paymentFailed = new Booking(2L, 1, 15.0, LocalDateTime.now(),
+        BookingStatus.PAYMENTFAILED, student, performance);
+    Booking providerCancelled = new Booking(3L, 1, 15.0, LocalDateTime.now(),
+        BookingStatus.CANCELLEDBYPROVIDER, student, performance);
+    performance.addBooking(active);
+    performance.addBooking(paymentFailed);
+    performance.addBooking(providerCancelled);
+
+    assertEquals(1, performance.getActiveBookings().size(),
+        "Only bookings with ACTIVE status should be returned.");
+  }
+
+  @Test
+  void getBookingDetailsForRefundReturnsEmptyStringWhenNoActiveBookings() {
+    assertEquals("", performance.getBookingDetailsForRefund(),
+        "No active bookings should produce no refund details.");
+  }
+
+  @Test
+  void getBookingDetailsForRefundIncludesOnlyActiveBookings() {
+    Student student =
+        new Student("student@ed.ac.uk", "password", "Hagan", 1234567, new StudentPreferences());
+    Booking active =
+        new Booking(1L, 2, 30.0, LocalDateTime.now(), BookingStatus.ACTIVE, student, performance);
+    Booking cancelled = new Booking(2L, 1, 15.0, LocalDateTime.now(),
+        BookingStatus.CANCELLEDBYSTUDENT, student, performance);
+    performance.addBooking(active);
+    performance.addBooking(cancelled);
+
+    String refundDetails = performance.getBookingDetailsForRefund();
+
+    assertTrue(refundDetails.contains("2;30.0;Hagan|student@ed.ac.uk|1234567"),
+        "Refund details should include the active booking details in the expected serialised format.");
+    assertFalse(refundDetails.contains("1;15.0"),
+        "Refund details should exclude cancelled bookings.");
+  }
+
+  @Test
   void getOrganiserEmailReturnsProviderEmail() {
     assertEquals("provider@gmail.com", performance.getOrganiserEmail());
   }
@@ -220,6 +282,31 @@ public class TestPerformance {
   @Test
   void hasIDReturnsFalseForDifferentID() {
     assertFalse(performance.hasID(999L));
+  }
+
+  @Test
+  void summaryToStringContainsKeySearchFields() {
+    String summary = performance.toString(false);
+
+    assertTrue(summary.contains("Performance ID: 1"),
+        "Summary output should include the performance ID.");
+    assertTrue(summary.contains("Event: Live Music"),
+        "Summary output should include the event title.");
+    assertTrue(summary.contains("Venue: Main Hall"), "Summary output should include the venue.");
+    assertTrue(summary.contains("Provider: EooEle"),
+        "Summary output should include the provider display name.");
+  }
+
+  @Test
+  void detailedToStringContainsKeyDetailFields() {
+    String details = performance.toString(true);
+
+    assertTrue(details.contains("Venue details: capacity 120, Indoors, Non-smoking"),
+        "Detailed output should include venue details.");
+    assertTrue(details.contains("Ticket details: Price: 15.00 | Tickets remaining: 100"),
+        "Detailed output should include ticket details.");
+    assertTrue(details.contains("Status: ACTIVE"),
+        "Detailed output should include the performance status.");
   }
 
 }

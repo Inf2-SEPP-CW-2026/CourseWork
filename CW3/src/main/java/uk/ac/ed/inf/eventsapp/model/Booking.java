@@ -45,18 +45,27 @@ public class Booking {
   }
 
   public String getStudentDetails() {
-    throw new UnsupportedOperationException("getStudentDetails is not implemented yet.");
+    if (student == null) {
+      return "";
+    }
+
+    return student.getName() + "|" + student.getEmail() + "|" + student.getPhoneNumber();
   }
 
   public String generateBookingRecord() {
     return "Booking #" + bookingNumber + "\nStudent: " + student.getName() + "\nEmail: "
         + student.getEmail() + "\nPhone: " + student.getPhoneNumber() + "\nEvent: "
         + performance.getEventTitle() + "\nPerformance: " + performance.toString() + "\nTickets: "
-        + numTickets + "\nAmount paid: £" + amountPaid;
+        + numTickets + "\nAmount paid: £" + String.format("%.2f", amountPaid);
   }
 
   public boolean isActive() {
     return status == BookingStatus.ACTIVE;
+  }
+
+  public boolean checkMoreThan24HoursAway() {
+    return performance != null && performance.getStartDateTime() != null
+        && performance.getStartDateTime().isAfter(LocalDateTime.now().plusHours(24));
   }
 
   public int getNumTickets() {
@@ -85,6 +94,14 @@ public class Booking {
 
   public String getPerformanceOrganiserEmail() {
     return performance == null ? null : performance.getOrganiserEmail();
+  }
+
+  public Performance getPerformance() {
+    return performance;
+  }
+
+  String toRefundDetailsString() {
+    return numTickets + ";" + amountPaid + ";" + getStudentDetails();
   }
 
 }

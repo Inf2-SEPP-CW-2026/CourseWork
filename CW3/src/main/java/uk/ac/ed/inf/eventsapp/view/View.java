@@ -8,6 +8,8 @@ import java.util.Collection;
 public interface View {
   String getInput(String inputPrompt);
 
+  String getInput(String inputPrompt, String promptEnd);
+
   void displaySuccess(String successMessage);
 
   void displayError(String errorMessage);

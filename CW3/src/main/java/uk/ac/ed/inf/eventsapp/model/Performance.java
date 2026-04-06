@@ -88,6 +88,10 @@ public class Performance {
     return event == null ? null : event.titleValue();
   }
 
+  public boolean belongsToEvent(long eventID) {
+    return event != null && event.getEventID() == eventID;
+  }
+
   public boolean checkHasNotHappenedYet() {
     return startDateTime != null && startDateTime.isAfter(LocalDateTime.now());
   }
@@ -101,7 +105,12 @@ public class Performance {
   }
 
   public String getBookingDetailsForRefund() {
-    throw new UnsupportedOperationException("getBookingDetailsForRefund is not implemented yet.");
+    Collection<String> activeBookingDetails = new ArrayList<>();
+    for (Booking booking : getActiveBookings()) {
+      activeBookingDetails.add(booking.toRefundDetailsString());
+    }
+
+    return String.join(System.lineSeparator(), activeBookingDetails);
   }
 
   @SuppressWarnings("unused")
@@ -146,6 +155,10 @@ public class Performance {
 
   public void addNumTicketsSold(int numTickets) {
     numTicketsSold += numTickets;
+  }
+
+  public void removeNumTicketsSold(int numTickets) {
+    numTicketsSold = Math.max(0, numTicketsSold - numTickets);
   }
 
   public boolean isActive() {
@@ -197,6 +210,7 @@ public class Performance {
         ? String.format("Price: %.2f | Tickets remaining: %d", ticketPrice, ticketsRemaining)
         : "No tickets required";
     String statusLabel = status == null ? "Unknown" : status.name();
+    // Review-related details are omitted because groups of 3 do not implement Review performance.
 
     return String.format(
         "Performance ID: %d%nEvent: %s%nTime: %s to %s%nVenue: %s%nVenue details: capacity %d, %s, %s%nPerformers: %s%nProvider: %s%nTicketing: %s%nTicket details: %s%nStatus: %s",

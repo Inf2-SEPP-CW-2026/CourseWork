@@ -11,9 +11,10 @@ public class Student extends User {
   private String name;
   private int phoneNumber;
   private final Collection<Booking> bookings;
-  private StudentPreferences preferences;
+  private final StudentPreferences preferences;
 
   public Student() {
+    this.preferences = new StudentPreferences();
     this.bookings = new ArrayList<>();
   }
 
@@ -22,7 +23,7 @@ public class Student extends User {
     super(email, password);
     this.name = name;
     this.phoneNumber = phoneNumber;
-    this.preferences = preferences;
+    this.preferences = preferences == null ? new StudentPreferences() : preferences;
     this.bookings = new ArrayList<>();
   }
 
