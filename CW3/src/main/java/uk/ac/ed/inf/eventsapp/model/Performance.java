@@ -71,6 +71,7 @@ public class Performance {
     return event != null && event.isTicketed();
   }
 
+  // True if remaining tickets (total minus sold) can cover the requested amount.
   public boolean checkIfTicketsLeft(int numTicketsToBuy) {
     return numTicketsTotal - numTicketsSold >= numTicketsToBuy;
   }
@@ -132,6 +133,7 @@ public class Performance {
     return startDateTime;
   }
 
+  // Returns only bookings with ACTIVE status; used to determine refund targets on cancellation.
   public Collection<Booking> getActiveBookings() {
     Collection<Booking> activeBookings = new ArrayList<>();
     for (Booking booking : bookings) {

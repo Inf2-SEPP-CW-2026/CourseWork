@@ -46,7 +46,7 @@ public class ViewPerformanceSystemTests {
     EventPerformanceController controller =
         new EventPerformanceController(view, events, performances, new MockPaymentSystem());
     controller.setCurrentUser(
-        new Student("student@example.com", "secret", "Alice", 123456789, new StudentPreferences()));
+        new Student("student@ed.ac.uk", "password", "Hagan", 123456789, new StudentPreferences()));
 
     controller.viewPerformance();
 
@@ -90,7 +90,7 @@ public class ViewPerformanceSystemTests {
     EventPerformanceController controller =
         new EventPerformanceController(view, events, performances, new MockPaymentSystem());
     controller.setCurrentUser(
-        new Student("student@example.com", "secret", "Alice", 123456789, new StudentPreferences()));
+        new Student("student@ed.ac.uk", "password", "Hagan", 123456789, new StudentPreferences()));
 
     controller.viewPerformance();
 
@@ -108,7 +108,7 @@ public class ViewPerformanceSystemTests {
     EventPerformanceController controller =
         new EventPerformanceController(view, events, performances, new MockPaymentSystem());
     controller.setCurrentUser(
-        new Student("student@example.com", "secret", "Alice", 123456789, new StudentPreferences()));
+        new Student("student@ed.ac.uk", "password", "Hagan", 123456789, new StudentPreferences()));
 
     controller.viewPerformance();
 

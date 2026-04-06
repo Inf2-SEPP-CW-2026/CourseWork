@@ -51,8 +51,8 @@ public class SearchPerformancesSystemTests {
     ScriptedView view = new ScriptedView("2026-05-10");
     EventPerformanceController controller =
         new EventPerformanceController(view, events, performances, new MockPaymentSystem());
-    controller.setCurrentUser(new Student("student@example.com", "secret", "XXXXRT", 123456789,
-        new StudentPreferences()));
+    controller.setCurrentUser(
+        new Student("student@ed.ac.uk", "secret", "XXXXRT", 123456789, new StudentPreferences()));
 
     controller.searchforPerformances();
 
@@ -100,7 +100,7 @@ public class SearchPerformancesSystemTests {
     ScriptedView view = new ScriptedView("2026-05-10");
     EventPerformanceController controller =
         new EventPerformanceController(view, events, performances, new MockPaymentSystem());
-    controller.setCurrentUser(new Student("student@example.com", "secret", "XXXXRT", 123456789,
+    controller.setCurrentUser(new Student("student@ed.ac.uk", "secret", "XXXXRT", 123456789,
         new StudentPreferences(true, false, false, false, false)));
 
     controller.searchforPerformances();
@@ -125,7 +125,7 @@ public class SearchPerformancesSystemTests {
     ScriptedView view = new ScriptedView("2026-05-10");
     EventPerformanceController controller =
         new EventPerformanceController(view, events, performances, new MockPaymentSystem());
-    controller.setCurrentUser(new Student("student@example.com", "secret", "XXXXRT", 123456789,
+    controller.setCurrentUser(new Student("student@ed.ac.uk", "secret", "XXXXRT", 123456789,
         new StudentPreferences(false, false, false, false, false)));
 
     controller.searchforPerformances();
@@ -143,8 +143,8 @@ public class SearchPerformancesSystemTests {
     ScriptedView view = new ScriptedView("10-05-2026");
     EventPerformanceController controller =
         new EventPerformanceController(view, events, performances, new MockPaymentSystem());
-    controller.setCurrentUser(new Student("student@example.com", "secret", "XXXXRT", 123456789,
-        new StudentPreferences()));
+    controller.setCurrentUser(
+        new Student("student@ed.ac.uk", "secret", "XXXXRT", 123456789, new StudentPreferences()));
 
     controller.searchforPerformances();
 
@@ -160,8 +160,8 @@ public class SearchPerformancesSystemTests {
     ScriptedView view = new ScriptedView("2026-05-11");
     EventPerformanceController controller =
         new EventPerformanceController(view, events, performances, new MockPaymentSystem());
-    controller.setCurrentUser(new Student("student@example.com", "secret", "XXXXRT", 123456789,
-        new StudentPreferences()));
+    controller.setCurrentUser(
+        new Student("student@ed.ac.uk", "secret", "XXXXRT", 123456789, new StudentPreferences()));
 
     controller.searchforPerformances();
 
@@ -183,8 +183,8 @@ public class SearchPerformancesSystemTests {
     ScriptedView view = new ScriptedView("2026-05-10");
     EventPerformanceController controller =
         new EventPerformanceController(view, events, performances, new MockPaymentSystem());
-    controller.setCurrentUser(new Student("student@example.com", "secret", "XXXXRT", 123456789,
-        new StudentPreferences()));
+    controller.setCurrentUser(
+        new Student("student@ed.ac.uk", "secret", "XXXXRT", 123456789, new StudentPreferences()));
 
     controller.searchforPerformances();
 

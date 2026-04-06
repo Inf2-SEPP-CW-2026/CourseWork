@@ -1,16 +1,27 @@
 package uk.ac.ed.inf.eventsapp.system;
 
-import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import external.MockPaymentSystem;
 import external.PaymentSystem;
 import uk.ac.ed.inf.eventsapp.controller.BookingController;
-import uk.ac.ed.inf.eventsapp.model.*;
+import uk.ac.ed.inf.eventsapp.model.Booking;
+import uk.ac.ed.inf.eventsapp.model.EntertainmentProvider;
+import uk.ac.ed.inf.eventsapp.model.Event;
+import uk.ac.ed.inf.eventsapp.model.EventType;
+import uk.ac.ed.inf.eventsapp.model.Performance;
+import uk.ac.ed.inf.eventsapp.model.PerformanceStatus;
+import uk.ac.ed.inf.eventsapp.model.Student;
+import uk.ac.ed.inf.eventsapp.model.StudentPreferences;
 
 public class BookPerformanceSystemTests {
   private EntertainmentProvider provider;
@@ -27,7 +38,7 @@ public class BookPerformanceSystemTests {
     provider = new EntertainmentProvider("provider@gmail.com", "password", "EooEle", "123",
         "Provider", "This is EooEle");
     student =
-        new Student("student@ed.ac.uk", "password", "Alice", 1234567, new StudentPreferences());
+        new Student("student@ed.ac.uk", "password", "Hagan", 1234567, new StudentPreferences());
 
     LocalDateTime start = LocalDateTime.now().plusDays(7);
     ticketedEvent = new Event(1L, "Live Music", EventType.MUSIC, true, provider);
@@ -251,7 +262,7 @@ public class BookPerformanceSystemTests {
 
     String record = view.getLastDisplayedBookingRecord();
     assertNotNull(record, "Booking record should be displayed.");
-    assertTrue(record.contains("Alice"), "Booking record should contain student name.");
+    assertTrue(record.contains("Hagan"), "Booking record should contain student name.");
     assertTrue(record.contains("Live Music"), "Booking record should contain event title.");
   }
 
