@@ -1,9 +1,9 @@
 # CW3
 
-This directory contains:
-
-- the main CW3 events app submission
-- the separate Task 4 faculty preregistration submission
+- `docs/`: generated Javadocs included in the packaged submission
+- `src/main/java/`: application source code
+- `src/test/java/`: unit tests and system-level tests
+- `src/main/resources/`: preregistered user data used by the main system
 
 ## How to run the main application
 
