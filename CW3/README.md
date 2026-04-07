@@ -9,7 +9,7 @@ This directory contains:
 
 The main system is a text-based application. Run:
 
-`mvn -q exec:java -Dexec.mainClass=uk.ac.ed.inf.eventsapp.Main`
+`mvn -q compile exec:java -Dexec.mainClass=uk.ac.ed.inf.eventsapp.Main`
 
 In the CLI:
 
