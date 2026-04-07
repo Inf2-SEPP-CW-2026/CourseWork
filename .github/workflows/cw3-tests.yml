@@ -79,7 +79,7 @@ jobs:
           cache: maven
 
       - name: Build CW3 main submission zip
-        run: mvn -q -f CW3/pom.xml -Pse-implementation-zip package
+        run: mvn -q -f CW3/pom.xml -Pse-implementation-javadocs,se-implementation-zip package
 
       - name: Expand CW3 main submission ZIP for artifact upload
         run: |
@@ -114,7 +114,7 @@ jobs:
           cache: maven
 
       - name: Build CW3 Task 4 zip
-        run: mvn -q -f CW3/pom.xml -Ptask4-code-review-zip package
+        run: mvn -q -f CW3/pom.xml -Ptask4-code-review-javadocs,task4-code-review-zip package
 
       - name: Expand CW3 Task 4 ZIP for artifact upload
         run: |

@@ -46,5 +46,15 @@
                 <exclude>**/._*</exclude>
             </excludes>
         </fileSet>
+
+        <fileSet>
+            <directory>${project.basedir}/target/javadocs/CW3SECodeReviewImplementationGroup22-javadocs</directory>
+            <outputDirectory>/docs/CW3SECodeReviewImplementationGroup22-javadocs</outputDirectory>
+            <excludes>
+                <exclude>**/.DS_Store</exclude>
+                <exclude>**/__MACOSX/**</exclude>
+                <exclude>**/._*</exclude>
+            </excludes>
+        </fileSet>
     </fileSets>
 </assembly>

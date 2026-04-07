@@ -160,7 +160,7 @@ public class UserController extends Controller {
         continue;
       }
 
-      if (EPAccountAlreadyExists(orgName, businessNumber)) {
+      if (EPAccountAlreadyExists(email, orgName, businessNumber)) {
         view.displayError("An account already exists for that entertainment provider.");
         return; // exit
       }
@@ -220,15 +220,21 @@ public class UserController extends Controller {
    * Checks whether an entertainment-provider account already exists for the supplied organisation
    * details.
    *
+   * @param email the email address to compare against
    * @param orgName the organisation name to compare against
    * @param businessNumber the business-registration number to compare against
    * @return {@code true} if a matching provider account already exists
    */
-  private boolean EPAccountAlreadyExists(String orgName, String businessNumber) {
+  private boolean EPAccountAlreadyExists(String email, String orgName, String businessNumber) {
     for (User user : users) {
       if (!(user instanceof EntertainmentProvider provider)) {
         continue;
       }
+
+      if (provider.getEmail().equals(email)) {
+        return true;
+      } // Actually we don't need to check this since it has already been checked in
+        // emailAlreadyExists()
 
       if (providerRepresentsSameOrganisation(provider, orgName, businessNumber)) {
         return true;
