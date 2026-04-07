@@ -14,6 +14,7 @@
             <outputDirectory>/</outputDirectory>
             <includes>
                 <include>pom.xml</include>
+                <include>README.md</include>
             </includes>
         </fileSet>
 
@@ -53,7 +54,7 @@
 
         <fileSet>
             <directory>${project.basedir}/target/javadocs/CW3SEImplementationGroup22-javadocs</directory>
-            <outputDirectory>/docs/CW3SEImplementationGroup22-javadocs</outputDirectory>
+            <outputDirectory>/docs</outputDirectory>
             <excludes>
                 <exclude>**/.DS_Store</exclude>
                 <exclude>**/__MACOSX/**</exclude>
