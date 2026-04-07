@@ -1,7 +1,8 @@
-#!/usr/bin/env sh
-set -eu
+#!/usr/bin/env bash
+set -euo pipefail
 
-repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+repo_root="$(cd "$script_dir/.." && pwd)"
 cw3_dir="$repo_root/CW3"
 output_dir="$cw3_dir/target/javadocs/CW3SECodeReviewImplementationGroup22-javadocs"
 javadoc_classpath_file="$cw3_dir/target/task4-javadoc.classpath"
