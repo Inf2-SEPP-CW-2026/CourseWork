@@ -38,16 +38,11 @@
 
 \vspace{1em}
 
-% Keep this report anonymous:
-% - do not include names
-% - do not include UUNs
-% - do not include the declaration of work here
-
 \section{Task 1: Design Choices and Implementation Notes}
 
 \subsection{Implemented Use Cases}
 
-This submission implements the group-22 main-system use cases:
+This submission implements these use cases:
 \begin{itemize}
   \item Log in
   \item Log out
@@ -63,65 +58,74 @@ This submission implements the group-22 main-system use cases:
 
 \subsection{System Structure}
 
-Briefly describe the main architecture of the system. For example:
-\begin{itemize}
-  \item the main packages and their responsibilities
-  \item the role of controllers, models, view, and external/integration components
-  \item how data is currently stored during execution
-\end{itemize}
+The implementation follows the structure suggested by the coursework diagrams. The
+\texttt{controller} package contains the use-case logic: \texttt{UserController} handles
+authentication, registration, and student preferences; \texttt{EventPerformanceController}
+handles event creation, search, viewing, and performance cancellation; and
+\texttt{BookingController} handles booking and booking cancellation. The
+\texttt{MenuController} provides the top-level text-menu flow and dispatches to the
+three main controllers depending on the current user role.
 
-\noindent
-\textbf{Write here:}
-
-\vspace{6em}
+The \texttt{model} package stores the main domain objects, including \texttt{User} and
+its subtypes, \texttt{Event}, \texttt{Performance}, \texttt{Booking}, and
+\texttt{StudentPreferences}. The \texttt{view} package provides a text-based interface
+through the \texttt{View} abstraction and \texttt{TextUserInterface} implementation.
+The \texttt{integration} package adapts the provided external verification API to the
+names used in the UML. During execution, application data is stored in shared in-memory
+collections for users, events, performances, and bookings, which are passed to the
+controllers from \texttt{Main}.
 
 \subsection{Alignment with the Provided UML}
 
-State whether the implementation matches the provided class and sequence diagrams exactly.
-If there were any points where the diagrams could not be followed directly, explain:
-\begin{itemize}
-  \item what the mismatch was
-  \item why it could not be implemented exactly as drawn
-  \item what design change was made in code
-  \item how the UML could be updated to stay consistent with the implementation
-\end{itemize}
+The implementation was written to stay close to the supplied UML, but a few points
+required small adjustments. First, some APIs shown in the class diagram belong to
+four-person-group use cases such as \texttt{reviewPerformance()} and
+\texttt{sponsorPerformance()}. Because our group size is three, we kept these methods as
+documented placeholders rather than removing them, but left them unimplemented with
+explicit comments explaining why.
 
-\noindent
-\textbf{Write here:}
-
-\vspace{8em}
+Second, some data access in the sequence diagrams is more abstract than a concrete Java
+implementation. For example, refund processing for \texttt{Cancel performance} is shown
+through \texttt{getBookingDetailsForRefund()}, so the controller follows this interface
+and parses refund details from the returned value before calling the payment system.
+However, local state updates still need direct booking objects afterwards. If we were to
+revise the UML, we would clarify which helper methods are intended as public workflow
+APIs and which are only abstract descriptions of internal data flow.
 
 \subsection{Key Design Choices}
 
-Summarise the most important choices you made when implementing the main system. For example:
-\begin{itemize}
-  \item handling of input validation
-  \item object ownership and shared state
-  \item controller responsibilities
-  \item interaction with mock external systems
-  \item error handling strategy in the text interface
-\end{itemize}
+One important design choice was to keep controller responsibilities narrow and explicit.
+Each controller is responsible for a coherent set of use cases, while the model classes
+hold the data and small pieces of domain logic such as ticket availability, booking
+status, or preference matching. Shared parsing and validation logic was moved into
+\texttt{InputParsers} so that the same input rules are reused across multiple use cases.
 
-\noindent
-\textbf{Write here:}
-
-\vspace{8em}
+Another important choice was to maintain shared application collections for events,
+performances, bookings, and users. This made it easier to match the use-case flow in
+the sequence diagrams and to write system tests that exercise multiple use cases in
+sequence. We also separated the text interface behind the \texttt{View} interface so
+that real console interaction and scripted system tests could use the same controller
+logic.
 
 \subsection{Quality Considerations in the Implementation}
 
-Briefly mention implementation choices that support quality attributes such as security,
-privacy, or reliability. This can overlap with the later reflection, but here the focus
-should be on concrete system decisions.
+We focused most on reliability and input robustness. User-entered values are validated
+close to the point of entry, and several use cases follow the wording of the requirements
+by retrying only where the document says they should retry and terminating otherwise.
+This reduces the chance of moving the system into invalid states. We also made payment
+and refund flows explicit, including the booking states \texttt{ACTIVE},
+\texttt{PAYMENTFAILED}, \texttt{CANCELLEDBYSTUDENT}, and
+\texttt{CANCELLEDBYPROVIDER}.
 
-\noindent
-\textbf{Write here:}
+We also addressed security in a limited but concrete way by storing user passwords as
+salted hashes rather than plain text, including for preregistered users loaded from file.
+Finally, maintainability was supported by adding Javadoc, keeping tests aligned with use
+cases, and automating formatting, testing, packaging, report generation, and Javadoc
+generation through Maven, pre-commit, and GitHub Actions.
 
-\vspace{8em}
+\newpage
 
 \section{Task 5: Reflection}
-
-% Each of the following three parts should stay within 250 words.
-% One or two paragraphs per part is enough.
 
 \subsection{Reflection on Teamwork}
 
@@ -148,6 +152,8 @@ We think the strongest part of our work was the combination of implementation an
 \textbf{Reflection on Action}
 The quality attribute we addressed most clearly was reliability. We tried to make invalid states and incorrect user actions visible and recoverable through explicit validation, controlled retry loops, and defensive handling of failure branches such as failed payment or refund flows. This was supported by tests for both normal paths and error paths, for example invalid identifiers, unavailable tickets, cancellation rules, and refund edge cases. We also improved reliability of the development process itself by requiring all checks to pass before merge. A second quality attribute was maintainability: controllers, models, view abstractions, utility parsers, CI packaging, and report tooling were all separated so that responsibilities stayed relatively clear.
 
+\newpage
+
 \textbf{Theory}
 We learned that quality came less from any single design decision and more from repeatedly tightening mismatches between code, tests, and documentation.
 
@@ -171,35 +177,26 @@ Next time we would keep the same workflow, but add clearer dashboard-style track
 
 \subsection{Screenshots of Tools and Practices}
 
-The coursework document explicitly asks for screenshots in the tools/agile/practices reflection.
-Insert screenshots of the tools you actually used, such as issue tracking, Kanban boards,
-version control history, CI runs, or planning boards.
+The screenshots below show the main tools and practices described in the reflection:
+pull-request-based development, automated GitHub Actions checks, and repository rules
+that enforced protected-branch collaboration.
 
 \begin{figure}[h]
   \centering
-  % Replace the filename below with your real screenshot.
-  \fbox{\rule{0pt}{2in}\rule{0.9\linewidth}{0pt}}
-  \caption{Screenshot placeholder 1. Replace with a real screenshot of a tool or practice used by the team.}
+  \includegraphics[width=0.92\linewidth]{img3.png}
+  \caption{A pull request used for review and integration, showing the required checks and squash-and-merge workflow.}
 \end{figure}
 
 \begin{figure}[h]
   \centering
-  % Replace the filename below with your real screenshot.
-  \fbox{\rule{0pt}{2in}\rule{0.9\linewidth}{0pt}}
-  \caption{Screenshot placeholder 2. Replace with another real screenshot if needed.}
+  \includegraphics[width=0.92\linewidth]{img1.png}
+  \caption{GitHub Actions workflow runs for the repository, including testing, formatting, report generation, and packaging automation.}
 \end{figure}
 
-\section{Submission Checklist}
-
-Before exporting the PDF, check the following:
-\begin{itemize}
-  \item The file is named \texttt{CW3SEReportGroup22.pdf}.
-  \item The document is anonymous.
-  \item The declaration of work is not included here.
-  \item Task 1 choices are described.
-  \item All three reflection parts are included.
-  \item Each reflection part is at most 250 words.
-  \item The tools/agile section includes screenshots.
-\end{itemize}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.92\linewidth]{img5.png}
+  \caption{Repository branch protection rules requiring pull requests, passing status checks, linear history, and blocked force pushes.}
+\end{figure}
 
 \end{document}
